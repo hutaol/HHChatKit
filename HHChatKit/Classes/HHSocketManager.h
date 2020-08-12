@@ -69,9 +69,18 @@ typedef NS_ENUM(NSInteger, HHSocketReceiveType) {
 /// 关闭socket
 - (void)close;
 
+/// 重连
+- (void)reconnect;
+
+
 /// 发送消息 NSString 或者 NSData
 /// @param data Send a UTF8 String or Data.
 - (void)send:(id)data;
+
+/// 发送心跳包
+/// @param data 心跳包内容
+/// @param sendInterval 间隔时间
+- (void)sendPing:(NSData *)data sendInterval:(NSTimeInterval)sendInterval;
 
 @end
 

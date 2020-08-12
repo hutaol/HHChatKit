@@ -14,8 +14,12 @@
 @property (nonatomic, strong) SRWebSocket *webSocket;
 @property (nonatomic, assign) HHSocketStatus socketStatus;
 
-@property (nonatomic, weak) NSTimer *timer;
 @property (nonatomic, copy) NSString *urlString;
+
+/// 重连定时器
+@property (nonatomic, weak) NSTimer *reconnectTimer;
+/// 发送心跳包定时器
+@property (nonatomic, strong) NSTimer *pingTimer;
 
 @end
 
@@ -23,7 +27,7 @@
     NSInteger _reconnectCounter;
 }
 
-+ (instancetype)shareManager{
++ (instancetype)shareManager {
     static HHSocketManager *instance;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -40,6 +44,10 @@
 
 - (void)close {
     [self _close];
+}
+
+- (void)reconnect {
+    [self _reconnect];
 }
 
 // Send a UTF8 String or Data.
@@ -84,6 +92,43 @@
     
 }
 
+- (void)sendPing:(NSData *)data sendInterval:(NSTimeInterval)sendInterval {
+    if (!self.pingTimer) {
+           self.pingTimer = [NSTimer scheduledTimerWithTimeInterval:sendInterval target:self selector:@selector(sendPing:sendInterval:) userInfo:self.urlString repeats:YES];
+           [[NSRunLoop currentRunLoop] addTimer:self.pingTimer forMode:NSRunLoopCommonModes];
+       }
+       switch (self.socketStatus) {
+           //未连接
+           case HHSocketStatusNotConnected:
+           {
+               if (self.pingTimer) {
+                   [self.pingTimer invalidate];
+                   self.pingTimer = nil;
+               }
+               NSLog(@"socket服务未连接");
+           }
+               break;
+           //成功后
+           case HHSocketStatusConnected:
+           case HHSocketStatusReceived:
+           {
+               [self.webSocket sendPing:data];
+           }
+               break;
+           case HHSocketStatusFailed:
+           case HHSocketStatusClosedByServer:
+           {
+               [self _reconnect];
+           }
+               break;
+           case HHSocketStatusClosedByUser:
+           {
+               NSLog(@"用户已关闭Socket服务");
+           }
+               break;
+       }
+}
+
 #pragma mark -- private method
 
 - (void)_open:(id)params {
@@ -97,7 +142,7 @@
     self.urlString = urlStr;
     
     if (!self.urlString && !self.urlString.length) {
-        //url不能空
+        // url不能空
         NSException *exception = [NSException exceptionWithName:@"URL Error" reason:@"URL is empty." userInfo:nil];
         [exception raise];
     }
@@ -114,10 +159,10 @@
 }
 
 - (void)_close {
+    // 取消重连
+    [self cancelSocketReconnect];
     [self.webSocket close];
     self.webSocket = nil;
-    [self.timer invalidate];
-    self.timer = nil;
 }
 
 - (void)_reconnect {
@@ -129,21 +174,29 @@
         // 开启定时器
         NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:self.overtime target:self selector:@selector(_open:) userInfo:self.urlString repeats:NO];
         [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
-        self.timer = timer;
+        self.reconnectTimer = timer;
     } else {
-        NSLog(@"Websocket Reconnected Outnumber ReconnectCount");
-        if (self.timer) {
-            [self.timer invalidate];
-            self.timer = nil;
-        }
-        return;
+        [self cancelSocketReconnect];
     }
     
 }
 
+- (void)cancelSocketReconnect {
+    if (self.reconnectTimer) {
+        [self.reconnectTimer invalidate];
+        self.reconnectTimer = nil;
+        NSLog(@"已经取消重连");
+    }
+    if (self.pingTimer) {
+        [self.pingTimer invalidate];
+        self.pingTimer = nil;
+        NSLog(@"已经取消发送心跳");
+    }
+}
+
 #pragma mark -- SRWebSocketDelegate
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket {
-    NSLog(@"Websocket Connected");
+    NSLog(@"Websocket 连接成功");
     
     // 开启成功后重置重连计数器
     _reconnectCounter = 0;
@@ -192,6 +245,8 @@
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didReceivePong:(NSData *)pongPayload {
+    NSLog(@":( Websocket Receive With didReceivePong %@", pongPayload);
+
     if (self.delegate && [self.delegate respondsToSelector:@selector(socketManager:receiveMessage:type:)]) {
         [self.delegate socketManager:self receiveMessage:pongPayload type:HHSocketReceiveTypeForPong];
     }
