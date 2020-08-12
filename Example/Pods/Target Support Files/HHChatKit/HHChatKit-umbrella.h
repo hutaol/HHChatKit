@@ -10,6 +10,7 @@
 #endif
 #endif
 
+#import "HHChatManager.h"
 
 FOUNDATION_EXPORT double HHChatKitVersionNumber;
 FOUNDATION_EXPORT const unsigned char HHChatKitVersionString[];
