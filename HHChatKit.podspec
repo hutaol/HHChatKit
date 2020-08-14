@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'HHChatKit'
-  s.version          = '0.1.4'
+  s.version          = '0.1.5'
   s.summary          = '使用SocketRocket聊天库'
 
 # This description is used to generate tags and improve search results.
@@ -36,7 +36,7 @@ TODO: Add long description of the pod here.
 #     'HHChatKit' => ['HHChatKit/Assets/*.png']
 #   }
 
-  s.resources = ['HHChatKit/Assets/ChatKeyBoard.bundle', 'HHChatKit/Assets/MessageResources.bundle']
+  s.resources = ['HHChatKit/ChatKeyBoard.bundle', 'HHChatKit/MessageResources.bundle']
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
