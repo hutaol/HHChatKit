@@ -10,6 +10,9 @@
 #import "HHKeyBoardTextView.h"
 #import "HHKeyBoardMoreView.h"
 #import "HHKeyBoardFaceView.h"
+#import "HHVoiceAnimationView.h"
+
+#import "HHAudioRecorder.h"
 
 #import "UIColor+HHKeyBoard.h"
 #import "NSString+HHKeyBoard.h"
@@ -25,7 +28,7 @@
 #define height_textview      39.f
 #define height_max_textview  112.f
 
-@interface HHKeyBoardView () <UITextViewDelegate, HHKeyboardDelegate>
+@interface HHKeyBoardView () <UITextViewDelegate, HHKeyboardDelegate, HHKeyBoardMoreViewDelegate>
 {
     UIImage *kVoiceImage;
     UIImage *kVoiceImageHL;
@@ -48,6 +51,7 @@
 
 @property (nonatomic, strong) HHKeyBoardMoreView *moreView;
 @property (nonatomic, strong) HHKeyBoardFaceView *faceView;
+@property (nonatomic, strong) HHVoiceAnimationView *voiceView;
 
 // 当前键盘状态
 @property (nonatomic, assign) HHKeyBoardState currentState;
@@ -72,7 +76,12 @@
         [self p_initImage];
 
         _currentState = HHKeyBoardStateNormal;
+        _showFace = YES;
+        _showVoice = YES;
+        _showMore = YES;
         
+        _textViewWidth = self.frame.size.width-(5*kHorizenSpace)-(3*kButtonHeight);
+
         [self setupUI];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillChange:) name:UIKeyboardWillShowNotification object:nil];
@@ -101,39 +110,10 @@
     [self addSubview:self.faceButton];
     [self addSubview:self.moreButton];
     
-    NSMutableArray *arr = [NSMutableArray array];
-    
-    HHKeyBoardMoreItem *item1 = [HHKeyBoardMoreItem moreItemWithType:HHKeyboardMoreItemTypeImage title:@"图片" imagePath:@"chat_more_icons_photo"];
-    [arr addObject:item1];
+}
 
-    HHKeyBoardMoreItem *item2 = [HHKeyBoardMoreItem moreItemWithType:HHKeyboardMoreItemTypeImage title:@"拍摄" imagePath:@"chat_more_icons_camera"];
-    [arr addObject:item2];
-    
-    [arr addObject:[HHKeyBoardMoreItem moreItemWithType:HHKeyboardMoreItemTypeImage title:@"拍摄" imagePath:@"chat_more_icons_camera"]];
-    
-    [arr addObject:[HHKeyBoardMoreItem moreItemWithType:HHKeyboardMoreItemTypeImage title:@"拍摄" imagePath:@"chat_more_icons_camera"]];
-
-    [arr addObject:[HHKeyBoardMoreItem moreItemWithType:HHKeyboardMoreItemTypeImage title:@"拍摄" imagePath:@"chat_more_icons_camera"]];
-    
-    [arr addObject:[HHKeyBoardMoreItem moreItemWithType:HHKeyboardMoreItemTypeImage title:@"拍摄" imagePath:@"chat_more_icons_camera"]];
-    
-    [arr addObject:[HHKeyBoardMoreItem moreItemWithType:HHKeyboardMoreItemTypeImage title:@"拍摄" imagePath:@"chat_more_icons_camera"]];
-
-    [arr addObject:[HHKeyBoardMoreItem moreItemWithType:HHKeyboardMoreItemTypeImage title:@"拍摄" imagePath:@"chat_more_icons_camera"]];
-    
-    [arr addObject:[HHKeyBoardMoreItem moreItemWithType:HHKeyboardMoreItemTypeImage title:@"拍摄" imagePath:@"chat_more_icons_camera"]];
-
-    [arr addObject:[HHKeyBoardMoreItem moreItemWithType:HHKeyboardMoreItemTypeImage title:@"拍摄" imagePath:@"chat_more_icons_camera"]];
-
-    [arr addObject:[HHKeyBoardMoreItem moreItemWithType:HHKeyboardMoreItemTypeImage title:@"拍摄" imagePath:@"chat_more_icons_camera"]];
-
-    [arr addObject:[HHKeyBoardMoreItem moreItemWithType:HHKeyboardMoreItemTypeImage title:@"拍摄" imagePath:@"chat_more_icons_camera"]];
-
-    [arr addObject:[HHKeyBoardMoreItem moreItemWithType:HHKeyboardMoreItemTypeImage title:@"拍摄" imagePath:@"chat_more_icons_camera"]];
-
-    
-    self.moreView.keyboardMoreData = arr;
-    
+- (void)setMoreItems:(NSMutableArray *)items {
+    self.moreView.keyboardMoreData = items;
 }
 
 - (void)layoutSubviews {
@@ -141,13 +121,29 @@
 
     self.textViewWidth = self.frame.size.width-(5*kHorizenSpace)-(3*kButtonHeight);
 
-    self.voiceButton.frame = CGRectMake(kHorizenSpace, self.frame.size.height-kVerticalSpace-kButtonHeight, kButtonHeight, kButtonHeight);
-    self.moreButton.frame = CGRectMake(self.frame.size.width-kHorizenSpace-kButtonHeight, self.frame.size.height-kVerticalSpace-kButtonHeight, kButtonHeight, kButtonHeight);
+    if (self.showVoice) {
+        self.voiceButton.frame = CGRectMake(kHorizenSpace, self.frame.size.height-kVerticalSpace-kButtonHeight, kButtonHeight, kButtonHeight);
+    } else {
+        self.voiceButton.frame = CGRectZero;
+        self.textViewWidth += (kButtonHeight+kHorizenSpace);
+    }
+    
+    if (self.showMore) {
+        self.moreButton.frame = CGRectMake(self.frame.size.width-kHorizenSpace-kButtonHeight, self.frame.size.height-kVerticalSpace-kButtonHeight, kButtonHeight, kButtonHeight);
+    } else {
+        self.moreButton.frame = CGRectZero;
+        self.textViewWidth += (kButtonHeight+kHorizenSpace);
+    }
+    
+    if (self.showFace) {
+        self.faceButton.frame = CGRectMake(self.frame.size.width-(kHorizenSpace+kButtonHeight)*2, self.frame.size.height-kVerticalSpace-kButtonHeight, kButtonHeight, kButtonHeight);
+    } else {
+        self.faceButton.frame = CGRectZero;
+        self.textViewWidth += (kButtonHeight+kHorizenSpace);
+    }
     
     self.textView.frame = CGRectMake(self.voiceButton.frame.size.width+self.voiceButton.frame.origin.x+kHorizenSpace, kTextMargin, self.textViewWidth, self.frame.size.height-2*kTextMargin);
     
-    self.faceButton.frame = CGRectMake(self.textView.frame.size.width+self.textView.frame.origin.x+kHorizenSpace, self.frame.size.height-kVerticalSpace-kButtonHeight, kButtonHeight, kButtonHeight);
-
     self.recordButton.frame = self.textView.frame;
 
 }
@@ -167,11 +163,12 @@
         // 展示键盘
         
         if (self.currentState == HHKeyBoardStateMore) {
+            [self.moreButton hh_setImage:kMoreImage imageHL:kMoreImageHL];
             [self.moreView dismissWithAnimation:YES];
-            self.moreButton.selected = YES;
+
         } else if (self.currentState == HHKeyBoardStateFace) {
+            [self.faceButton hh_setImage:kFaceImage imageHL:kFaceImageHL];
             [self.faceView dismissWithAnimation:YES];
-            self.faceButton.selected = YES;
         }
         
         self.currentState = HHKeyBoardStateKeyBoard;
@@ -194,12 +191,19 @@
 // 收起键盘
 - (void)dismissKeyboard {
     [self.textView resignFirstResponder];
-    self.currentState = HHKeyBoardStateNormal;
 
     if (self.currentState == HHKeyBoardStateMore) {
+        
+        [self.moreButton hh_setImage:kMoreImage imageHL:kMoreImageHL];
         [self.moreView dismissWithAnimation:YES];
+        self.currentState = HHKeyBoardStateNormal;
+        
     } else if (self.currentState == HHKeyBoardStateFace) {
+        
+        [self.faceButton hh_setImage:kFaceImage imageHL:kFaceImageHL];
         [self.faceView dismissWithAnimation:YES];
+        self.currentState = HHKeyBoardStateNormal;
+        
     } else {
         [self chatKeyboard:self didChangeHeight:0];
     }
@@ -465,27 +469,90 @@ static NSString *textRec = @"";
 
 // 开始录音
 - (void)beginRecordVoice:(UIButton *)sender {
-    
+    NSLog(@"开始录音");
+    if (![UIApplication.sharedApplication.keyWindow.subviews containsObject:self.voiceView]) {
+        [UIApplication.sharedApplication.keyWindow addSubview:self.voiceView];
+    }
+    self.voiceView.state = HHVoiceNormal;
+    [HHAudioRecorder.shared startRecord];
 }
 
 // 结束录音
 - (void)endRecordVoice:(UIButton *)sender {
-    
+    NSLog(@"结束录音");
+    [self sendVoice];
 }
 
 // 取消录音
 - (void)cancelRecordVoice:(UIButton *)sender {
-    
+    NSLog(@"取消录音");
+    if ([UIApplication.sharedApplication.keyWindow.subviews containsObject:self.voiceView]) {
+        self.voiceView.state = HHVoiceCancel;
+        [self.voiceView removeFromSuperview];
+    }
+    [HHAudioRecorder.shared cancelRecording];
 }
 
 // 将要取消录音
 - (void)remindDragExit:(UIButton *)sender {
-
+    NSLog(@"将要取消录音");
+    self.voiceView.state = HHVoiceWillCancel;
 }
 
 // 继续录音
 - (void)remindDragEnter:(UIButton *)sender {
+    NSLog(@"继续录音");
+    self.voiceView.state = HHVoiceNormal;
+}
 
+/// 发送录音文件
+- (void)sendVoice {
+    if (!self.voiceView || self.voiceView.state == HHVoiceFinished) {
+        return;
+    }
+    if ([UIApplication.sharedApplication.keyWindow.subviews containsObject:self.voiceView]) {
+        self.voiceView.state = HHVoiceFinished;
+        [self.voiceView removeFromSuperview];
+    }
+    NSDictionary *recordInfo = [HHAudioRecorder.shared stopRecord];
+    NSLog(@"recordInfo: %@", recordInfo);
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(keyboard:sendVoice:)]) {
+        if (recordInfo) {
+            [self.delegate keyboard:self sendVoice:recordInfo];
+        }
+    }
+}
+
+#pragma mark - HHKeyBoardMoreViewDelegate
+
+- (void)keyboardMore:(id)keyboard didSelectedFunctionItem:(HHKeyBoardMoreItem *)funcItem {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(keyboard:didSelectedMoreItem:)]) {
+        [self.delegate keyboard:self didSelectedMoreItem:funcItem];
+    }
+}
+
+#pragma mark - Setters
+
+- (void)setShowVoice:(BOOL)showVoice {
+    _showVoice = showVoice;
+    self.voiceButton.hidden = !showVoice;
+    [self layoutSubviews];
+    [self layoutIfNeeded];
+}
+
+- (void)setShowFace:(BOOL)showFace {
+    _showFace = showFace;
+    self.faceButton.hidden = !showFace;
+    [self layoutSubviews];
+    [self layoutIfNeeded];
+}
+
+- (void)setShowMore:(BOOL)showMore {
+    _showMore = showMore;
+    self.moreButton.hidden = !showMore;
+    [self layoutSubviews];
+    [self layoutIfNeeded];
 }
 
 #pragma mark - Getters
@@ -555,6 +622,7 @@ static NSString *textRec = @"";
     if (!_moreView) {
         _moreView = [[HHKeyBoardMoreView alloc] init];
         _moreView.keyboardDelegate = self;
+        _moreView.delegate = self;
     }
     return _moreView;
 }
@@ -566,6 +634,18 @@ static NSString *textRec = @"";
         _faceView.backgroundColor = [UIColor redColor];
     }
     return _faceView;
+}
+
+- (HHVoiceAnimationView *)voiceView {
+    if (!_voiceView) {
+        _voiceView = [[HHVoiceAnimationView alloc] initWithFrame:CGRectMake(kbScreenWidth/2.f-160.f/2.f, kbScreenHeight/2.f-180.f/2.f, 160.f, 180.f)];
+        
+        __weak typeof(self) weakSelf = self;
+        _voiceView.timeoutEndRecordBlock = ^{
+            [weakSelf sendVoice];
+        };
+    }
+    return _voiceView;
 }
 
 - (void)dealloc {

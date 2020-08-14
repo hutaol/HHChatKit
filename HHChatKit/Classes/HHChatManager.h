@@ -8,17 +8,19 @@
 
 #import <Foundation/Foundation.h>
 #import "HHChatCallback.h"
-#import "HHChatMessage.h"
+#import "HHMessage.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface HHChatManager : NSObject
 
+@property (nonatomic, strong) id<HHMessageListener> messageListener;
+
 + (instancetype)shareManager;
 
 - (void)initKit:(NSString *)url;
 
-- (int)sendMessage:(HHChatMessage *)msg cb:(id<HHChatCallback>)cb;
+- (int)sendMessage:(HHMessage *)msg cb:(id<HHChatCallback>)cb;
 
 @end
 

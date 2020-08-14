@@ -8,8 +8,8 @@
 
 #import "HHChatManager.h"
 #import "HHSocketManager.h"
-#import "HHChatManager.h"
 #import <YYModel/YYModel.h>
+#import "HHMessage.h"
 
 @interface HHChatManager () <HHSocketManagerDelegte>
 
@@ -38,7 +38,13 @@
 }
 
 - (void)socketManager:(HHSocketManager *)manager receiveMessage:(id)message type:(HHSocketReceiveType)type {
-    
+    if (type == HHSocketReceiveTypeForMessage) {
+        // message NSString
+        HHMessage *msg = [HHMessage yy_modelWithJSON:message];
+        if (self.messageListener) {
+            [self.messageListener onNewMessage:@[msg]];
+        }
+    }
 }
 
 - (void)socketManager:(HHSocketManager *)manager sendMessageError:(HHSocketStatus)status {
@@ -49,7 +55,7 @@
     
 }
 
-- (int)sendMessage:(HHChatMessage *)msg cb:(id<HHChatCallback>)cb {
+- (int)sendMessage:(HHMessage *)msg cb:(id<HHChatCallback>)cb {
     
     NSString *str = [msg yy_modelToJSONString];
 //    NSData *data = [msg yy_modelToJSONData];

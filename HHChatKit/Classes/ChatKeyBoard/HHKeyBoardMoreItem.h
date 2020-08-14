@@ -11,20 +11,20 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, HHKeyboardMoreItemType) {
-    HHKeyboardMoreItemTypeNone,
-    HHKeyboardMoreItemTypeImage,
-    HHKeyboardMoreItemTypePhoto,
-    HHKeyboardMoreItemTypeAudio,
-    HHKeyboardMoreItemTypeOnlineMeeting,
-    HHKeyboardMoreItemTypeOnlineMeetingTip,
-    HHKeyboardMoreItemTypeNetworkCall,
-    HHKeyboardMoreItemTypeDoubleLiveMeeting,
-    HHKeyboardMoreItemTypeUseful,
-    HHKeyboardMoreItemTypeVirtualDesktop,
-    HHKeyboardMoreItemTypeImageSynchronization,
-    HHKeyboardMoreItemTypeOnlineTrain,
-    HHKeyboardMoreItemTypeOnlineLive,
-    HHKeyboardMoreItemTypeInterfaceService,
+    HHKeyboardMoreItemTypeNone  = 0,
+    HHKeyboardMoreItemTypePhoto = 1,
+    HHKeyboardMoreItemTypeCamera = 2,
+    HHKeyboardMoreItemTypeAudio = 3,
+    HHKeyboardMoreItemTypeOnlineMeeting = 4,
+    HHKeyboardMoreItemTypeOnlineMeetingTip = 5,
+    HHKeyboardMoreItemTypeNetworkCall = 6,
+    HHKeyboardMoreItemTypeDoubleLiveMeeting = 7,
+    HHKeyboardMoreItemTypeUseful = 8,
+    HHKeyboardMoreItemTypeVirtualDesktop = 9,
+    HHKeyboardMoreItemTypeImageSynchronization = 10,
+    HHKeyboardMoreItemTypeOnlineTrain = 11,
+    HHKeyboardMoreItemTypeOnlineLive = 12,
+    HHKeyboardMoreItemTypeInterfaceService = 13,
 };
 
 @interface HHKeyBoardMoreItem : NSObject

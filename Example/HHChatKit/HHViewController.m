@@ -7,6 +7,7 @@
 //
 
 #import "HHViewController.h"
+#import <HHChatKit/HHChatManager.h>
 
 @interface HHViewController ()
 
@@ -17,7 +18,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+    [[HHChatManager shareManager] initKit:@"ws://172.16.4.17:8001"];
 }
 
 - (void)didReceiveMemoryWarning

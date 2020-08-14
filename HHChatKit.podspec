@@ -36,9 +36,12 @@ TODO: Add long description of the pod here.
 #     'HHChatKit' => ['HHChatKit/Assets/*.png']
 #   }
 
-  s.resource = 'HHChatKit/ChatKeyBoard.bundle'
+  s.resources = ['HHChatKit/Assets/ChatKeyBoard.bundle', 'HHChatKit/Assets/MessageResources.bundle']
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
   s.dependency 'SocketRocket', '~> 0.5.1'
+  s.dependency 'YYModel', '~> 1.0.4'
+  s.dependency 'SDWebImage', '~> 5.8.4'
+
 end
