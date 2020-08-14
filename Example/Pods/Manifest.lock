@@ -9,9 +9,13 @@ PODS:
   - FBSnapshotTestCase/Core (2.1.4)
   - FBSnapshotTestCase/SwiftSupport (2.1.4):
     - FBSnapshotTestCase/Core
-  - HHChatKit (0.1.4):
+  - HHChatKit (0.1.5):
+    - SDWebImage (~> 5.8.4)
     - SocketRocket (~> 0.5.1)
     - YYModel (~> 1.0.4)
+  - SDWebImage (5.8.4):
+    - SDWebImage/Core (= 5.8.4)
+  - SDWebImage/Core (5.8.4)
   - SocketRocket (0.5.1)
   - Specta (1.0.7)
   - YYModel (1.0.4)
@@ -28,6 +32,7 @@ SPEC REPOS:
     - Expecta
     - "Expecta+Snapshots"
     - FBSnapshotTestCase
+    - SDWebImage
     - SocketRocket
     - Specta
     - YYModel
@@ -40,7 +45,8 @@ SPEC CHECKSUMS:
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
   "Expecta+Snapshots": dcff217eef506dabd6dfdc7864ea2da321fafbb8
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
-  HHChatKit: 32e1784bf72ee2cb47a525b5c2c7ea9371fab250
+  HHChatKit: ed9b5fc15b0cee5d5412a28c6c8cf9df2cd214fb
+  SDWebImage: cf6922231e95550934da2ada0f20f2becf2ceba9
   SocketRocket: d57c7159b83c3c6655745cd15302aa24b6bae531
   Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30

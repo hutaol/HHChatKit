@@ -1,5 +1,5 @@
 //
-//  HHChatMessage.m
+//  HHMessage.m
 //  HHChatKit
 //
 //  Created by Henry on 2020/8/12.

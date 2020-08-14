@@ -40,6 +40,9 @@ TODO: Add long description of the pod here.
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
+  
+  s.vendored_libraries = "HHChatKit/Classes/Lame/libmp3lame.a"
+
   s.dependency 'SocketRocket', '~> 0.5.1'
   s.dependency 'YYModel', '~> 1.0.4'
   s.dependency 'SDWebImage', '~> 5.8.4'
