@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3541811C24EA87C80081DD3E /* HHTabBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3541811B24EA87C80081DD3E /* HHTabBarController.m */; };
+		3541811F24EA87F40081DD3E /* HHConvListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3541811E24EA87F40081DD3E /* HHConvListViewController.m */; };
+		3541812224EA881B0081DD3E /* HHMineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3541812124EA881B0081DD3E /* HHMineViewController.m */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
 		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
@@ -38,6 +41,12 @@
 
 /* Begin PBXFileReference section */
 		3228E45D78D7BF413BC256A6 /* Pods_HHChatKit_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HHChatKit_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3541811A24EA87C80081DD3E /* HHTabBarController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HHTabBarController.h; sourceTree = "<group>"; };
+		3541811B24EA87C80081DD3E /* HHTabBarController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HHTabBarController.m; sourceTree = "<group>"; };
+		3541811D24EA87F40081DD3E /* HHConvListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HHConvListViewController.h; sourceTree = "<group>"; };
+		3541811E24EA87F40081DD3E /* HHConvListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HHConvListViewController.m; sourceTree = "<group>"; };
+		3541812024EA881B0081DD3E /* HHMineViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HHMineViewController.h; sourceTree = "<group>"; };
+		3541812124EA881B0081DD3E /* HHMineViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HHMineViewController.m; sourceTree = "<group>"; };
 		4939C8374BFD3883806BB475 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		5792C39AA99CA0486652FFC5 /* Pods-HHChatKit_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HHChatKit_Tests.release.xcconfig"; path = "Target Support Files/Pods-HHChatKit_Tests/Pods-HHChatKit_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		59BDD33169CA38F59CA22FE4 /* Pods-HHChatKit_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HHChatKit_Example.debug.xcconfig"; path = "Target Support Files/Pods-HHChatKit_Example/Pods-HHChatKit_Example.debug.xcconfig"; sourceTree = "<group>"; };
@@ -134,6 +143,12 @@
 			children = (
 				6003F59C195388D20070C39A /* HHAppDelegate.h */,
 				6003F59D195388D20070C39A /* HHAppDelegate.m */,
+				3541811A24EA87C80081DD3E /* HHTabBarController.h */,
+				3541811B24EA87C80081DD3E /* HHTabBarController.m */,
+				3541811D24EA87F40081DD3E /* HHConvListViewController.h */,
+				3541811E24EA87F40081DD3E /* HHConvListViewController.m */,
+				3541812024EA881B0081DD3E /* HHMineViewController.h */,
+				3541812124EA881B0081DD3E /* HHMineViewController.m */,
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
 				6003F5A5195388D20070C39A /* HHViewController.h */,
 				6003F5A6195388D20070C39A /* HHViewController.m */,
@@ -404,6 +419,9 @@
 				6003F59E195388D20070C39A /* HHAppDelegate.m in Sources */,
 				6003F5A7195388D20070C39A /* HHViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
+				3541812224EA881B0081DD3E /* HHMineViewController.m in Sources */,
+				3541811F24EA87F40081DD3E /* HHConvListViewController.m in Sources */,
+				3541811C24EA87C80081DD3E /* HHTabBarController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
