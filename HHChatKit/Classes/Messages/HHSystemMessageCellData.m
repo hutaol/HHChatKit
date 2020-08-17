@@ -8,7 +8,7 @@
 
 #import "HHSystemMessageCellData.h"
 #import "HHKeyBoardHeader.h"
-#import "NSString+HHChat.m"
+#import "NSString+HHChat.h"
 
 @implementation HHSystemMessageCellData
 

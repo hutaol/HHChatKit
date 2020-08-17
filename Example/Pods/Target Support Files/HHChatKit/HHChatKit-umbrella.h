@@ -60,6 +60,7 @@
 #import "NSString+HHChat.h"
 #import "UIImageView+HHChat.h"
 #import "UIView+HHLayout.h"
+#import "HHAudioPlayer.h"
 #import "ImageTool.h"
 #import "LameTool.h"
 #import "PathTool.h"

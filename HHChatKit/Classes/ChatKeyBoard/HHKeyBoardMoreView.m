@@ -10,7 +10,7 @@
 #import "HHKeyBoardMoreCell.h"
 #import "HHKeyBoardMoreFlowLayout.h"
 #import "UIColor+HHKeyBoard.h"
-#import "UIView+HHKeyBoard.h"
+#import "UIView+HHLayout.h"
 #import "HHKeyBoardHeader.h"
 
 #define kPageControlHeight        10

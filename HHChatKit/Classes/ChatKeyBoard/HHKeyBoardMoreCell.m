@@ -7,8 +7,7 @@
 //
 
 #import "HHKeyBoardMoreCell.h"
-#import "UIView+HHKeyBoard.h"
-#import "HHKeyBoardMoreItem.h"
+#import "UIView+HHLayout.h"
 #import "UIImage+HHKeyBoard.h"
 
 @implementation HHKeyBoardMoreCell

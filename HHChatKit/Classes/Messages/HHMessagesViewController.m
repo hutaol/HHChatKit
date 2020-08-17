@@ -8,12 +8,14 @@
 
 #import "HHMessagesViewController.h"
 #import "HHKeyBoardView.h"
-#import "UIView+HHKeyBoard.h"
-#import "UIScrollView+HHKeyBoard.h"
 #import "HHKeyBoardHeader.h"
 #import "HHChatManager.h"
+
+#import "UIView+HHLayout.h"
+#import "UIScrollView+HHKeyBoard.h"
 #import "UIColor+HHKeyBoard.h"
 #import "NSString+HHKeyBoard.h"
+#import "NSDate+HHChat.h"
 
 #import "HHTextMessageCell.h"
 #import "HHImageMessageCell.h"
@@ -304,6 +306,11 @@
         [items addObject:[[UIMenuItem alloc] initWithTitle:@"复制" action:@selector(onCopyMsg:)]];
     }
     
+    // TOOD 撤回 自己的消息5分钟 或者管理员3天
+    long long interval = [[NSDate timestamp:[NSDate date]] longLongValue] - [data.time longLongValue];
+    
+    [items addObject:[[UIMenuItem alloc] initWithTitle:@"撤回" action:@selector(onRevoke:)]];
+
     BOOL isFirstResponder = NO;
     
     if (isFirstResponder) {
@@ -386,6 +393,28 @@
 }
 
 - (void)onRevoke:(id)sender {
+    if (!_menuUIMsg) {
+        return;
+    }
+    NSUInteger index = [self.dataSource indexOfObject:_menuUIMsg];
+    if (index == NSNotFound) {
+        return;
+    }
+    
+    [self.dataSource removeObject:_menuUIMsg];
+    
+    [self.tableView beginUpdates];
+    [self.tableView deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+
+    HHSystemMessageCellData *data = [[HHSystemMessageCellData alloc] initWithDirection:_menuUIMsg.direction];
+    data.content = [NSString stringWithFormat:@"%@撤回一条消息", _menuUIMsg.name];
+    data.time = _menuUIMsg.time;
+    
+    [self.dataSource insertObject:data atIndex:index];
+    [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+    [self.tableView endUpdates];
+    [self scrollToBottom:YES];
+    
 }
 
 #pragma mark - Getters

@@ -17,7 +17,7 @@
 #import "UIColor+HHKeyBoard.h"
 #import "NSString+HHKeyBoard.h"
 #import "UIButton+HHKeyBoard.h"
-#import "UIView+HHKeyBoard.h"
+#import "UIView+HHLayout.h"
 
 #import "HHKeyBoardHeader.h"
 

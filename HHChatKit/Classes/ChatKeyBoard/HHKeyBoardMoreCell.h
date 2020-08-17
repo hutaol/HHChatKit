@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-@class HHKeyBoardMoreItem;
+#import "HHKeyBoardMoreItem.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
