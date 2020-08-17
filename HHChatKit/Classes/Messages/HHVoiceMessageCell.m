@@ -40,25 +40,16 @@
         [self.bubbleView addSubview:_tipLabel];
         _tipLabel.hidden = YES;
         
-//        @weakify(self)
-//        [self.KVOController observe:self keyPath:@"voiceData.isPlaying" options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld block:^(id observer, id object, NSDictionary *change) {
-//            @strongify(self)
-//
-//            if (self.voiceData.isPlaying) {
-//                [self.voice startAnimating];
-//            } else {
-//                [self.voice stopAnimating];
-//            }
-//
-//            if (self.voiceData.direction == MsgDirectionIncoming) {
-//                _duration.textAlignment = NSTextAlignmentLeft;
-//            } else {
-//                _duration.textAlignment = NSTextAlignmentRight;
-//            }
-//        }];
-//
     }
     return self;
+}
+
+- (void)stopVoiceMessage {
+    [self.voice stopAnimating];
+}
+
+- (void)playVoiceMessage {
+    [self.voice startAnimating];
 }
 
 - (void)fillWithData:(HHVoiceMessageCellData *)data {

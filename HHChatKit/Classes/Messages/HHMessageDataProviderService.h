@@ -22,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (HHMessageCellData *)getMessageCellData:(NSString *)text;
 + (HHMessageCellData *)getMessageCellDataWithVoice:(NSDictionary *)voice;
++ (HHMessageCellData *)getMessageCellDataWithImage:(UIImage *)image;
 
 @end
 

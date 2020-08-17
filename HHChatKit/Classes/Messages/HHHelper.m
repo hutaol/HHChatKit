@@ -7,6 +7,8 @@
 //
 
 #import "HHHelper.h"
+#import "PathTool.h"
+#import "NSString+HHKeyBoard.h"
 
 @implementation HHHelper
 
@@ -75,6 +77,17 @@
 
 + (NSString *)randAvatarUrl {
     return [NSString stringWithFormat:@"https://picsum.photos/id/%d/200/200", rand()%999];
+}
+
++ (NSString *)getImagePath {
+    NSString *filePath = [PathTool getFileDocumentPath:@"/HHChatKit/image"];
+    
+    [PathTool createDirectory:filePath];
+    
+    NSString *name = [NSString stringWithFormat:@"%ld", (long)[[NSDate date] timeIntervalSince1970]];
+
+    return [NSString stringWithFormat:@"%@/%@", filePath, [name md5]];
+
 }
 
 @end

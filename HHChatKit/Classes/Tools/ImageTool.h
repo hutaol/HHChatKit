@@ -16,10 +16,13 @@ typedef void (^ImagePickerMultipleCompletion)(NSArray <UIImage *> *images);
 
 @interface ImageTool : NSObject
 
++ (void)imagePickerWithController:(UIViewController *)vc allowCrop:(BOOL)allowCrop completion:(ImagePickerCompletion)completion;
+
 + (void)imagePickerMultipleWithController:(UIViewController *)vc count:(NSInteger)count completion:(ImagePickerMultipleCompletion)completion;
 
 + (void)cameraWithController:(UIViewController *)vc completion:(ImagePickerCompletion)completion;
 
++ (void)showImageWithController:(UIViewController *)vc source:(NSArray *)source index:(NSInteger)index;
 
 @end
 

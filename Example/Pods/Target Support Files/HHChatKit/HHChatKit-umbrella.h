@@ -33,7 +33,6 @@
 #import "HHChatCallback.h"
 #import "HHChatComm.h"
 #import "HHChatManager.h"
-#import "HHChatMessage.h"
 #import "HHCodingModel.h"
 #import "HHMessage.h"
 #import "HHSocketManager.h"

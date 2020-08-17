@@ -65,6 +65,22 @@
     return data;
 }
 
++ (HHMessageCellData *)getMessageCellDataWithImage:(UIImage *)image {
+    HHImageMessageCellData *data = [[HHImageMessageCellData alloc] initWithDirection:MsgDirectionOutgoing];
+    data.thumbImage = image;
+    
+    NSData *imgData = UIImageJPEGRepresentation(image, 0.75);
+
+    NSString *path = [HHHelper getImagePath];
+    
+    [[NSFileManager defaultManager] createFileAtPath:path contents:imgData attributes:nil];
+    
+    data.path = path;
+    data.length = [imgData length]/1000;
+    
+    return data;
+}
+
 + (HHMessageCellData *)getMessageCellDataWithElem:(HHElem *)elem message:(HHMessage *)message {
     HHMessageCellData *data = nil;
 
@@ -77,7 +93,13 @@
         data = textData;
         
     } else if ([elem isKindOfClass:[HHImageElem class]]) {
-//        data = [self getImageCellData:message formElem:(TIMImageElem *)elem];
+        HHImageElem *imageElem = (HHImageElem *)elem;
+
+        HHImageMessageCellData *imageData = [[HHImageMessageCellData alloc] initWithDirection:message.isSelf ? MsgDirectionOutgoing : MsgDirectionIncoming];
+//        imageData.largeImage = imageElem
+        
+        data = imageData;
+
     } else if ([elem isKindOfClass:[HHSoundElem class]]) {
         HHSoundElem *soundElem = (HHSoundElem *)elem;
         HHVoiceMessageCellData *soundData = [[HHVoiceMessageCellData alloc] initWithDirection:(message.isSelf ? MsgDirectionOutgoing : MsgDirectionIncoming)];

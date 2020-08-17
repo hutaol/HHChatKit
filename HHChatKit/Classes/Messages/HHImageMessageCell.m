@@ -95,6 +95,7 @@
         _thumb.image = data.thumbImage ?: data.originImage;
 
     } else {
+        _thumb.image = [UIImage imageWithContentsOfFile:data.path];
 //        [data downloadImage:TImage_Type_Thumb];
     }
     

@@ -25,7 +25,8 @@
 
 #import "HHMessageDataProviderService.h"
 #import "ToastTool.h"
-
+#import "ImageTool.h"
+#import "HHAudioPlayer.h"
 
 @interface HHMessagesViewController () <UITableViewDataSource, UITableViewDelegate, HHKeyBoardViewDelegate, HHMessageCellDelegate, HHMessageListener>
 
@@ -122,6 +123,17 @@
     [self sendMessage:[HHMessageDataProviderService getMessageCellDataWithVoice:voice]];
 }
 
+- (void)sendImage:(UIImage *)image {
+    if (!image) {
+        [ToastTool showAtCenter:@"请选择有效的图片"];
+        return;
+    }
+
+    // 发送图片
+    [self sendMessage:[HHMessageDataProviderService getMessageCellDataWithImage:image]];
+
+}
+
 #pragma mark - Public Method
 
 - (void)repleceMoreItems:(NSMutableArray<HHKeyBoardMoreItem *> *)items {
@@ -137,11 +149,19 @@
 }
 
 - (void)onActionPhoto {
-    
+    [ImageTool imagePickerMultipleWithController:self count:9 completion:^(NSArray<UIImage *> * _Nonnull images) {
+        for (UIImage *image in images) {
+            [self sendImage:image];
+        }
+    }];
 }
 
 - (void)onAcitonCamera {
-    
+    [ImageTool cameraWithController:self completion:^(UIImage * _Nonnull image) {
+        
+    }];
+//    NSArray *arr = @[@"https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1597480175&di=2d466c58f048d3b8393913597561eaae&src=http://a3.att.hudong.com/14/75/01300000164186121366756803686.jpg"];
+//    [ImageTool showImageWithController:self source:arr index:0];
 }
 
 #pragma mark - UITableViewDataSource, UITableViewDelegate
@@ -263,7 +283,13 @@
 }
 
 - (void)onSelectMessage:(HHMessageCell *)cell {
-    
+    if ([cell isKindOfClass:[HHImageMessageCell class]]) {
+        [self showImageMessage:(HHImageMessageCell *)cell];
+        
+    } else if ([cell isKindOfClass:[HHVoiceMessageCell class]]) {
+        [self playVoiceMessage:(HHVoiceMessageCell *)cell];
+        
+    }
 }
 
 - (void)onRetryMessage:(HHMessageCell *)cell {
@@ -298,6 +324,35 @@
 - (void)menuDidHide:(NSNotification*)notification {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIMenuControllerDidHideMenuNotification object:nil];
 }
+
+#pragma mark - 点击Messagecell
+
+/// 图片
+- (void)showImageMessage:(HHImageMessageCell *)cell {
+    [ImageTool showImageWithController:self source:@[cell.imageData.thumbImage] index:0];
+}
+
+/// 播放语音
+- (void)playVoiceMessage:(HHVoiceMessageCell *)cell {
+    // 离线语音已读上报
+
+    // 播放语音
+    
+    if (cell.voiceData.voiceStatus == HHVoiceMessageStatusNormal) {
+        // 播放语音消息
+        cell.voiceData.voiceStatus = HHVoiceMessageStatusPlaying;
+        [cell playVoiceMessage];
+        [[HHAudioPlayer sharedAudioPlayer] playAudioAtPath:cell.voiceData.path complete:^(BOOL finished) {
+            cell.voiceData.voiceStatus = HHVoiceMessageStatusNormal;
+            [cell stopVoiceMessage];
+        }];
+    } else {
+        [[HHAudioPlayer sharedAudioPlayer] stopPlayingAudio];
+        [cell stopVoiceMessage];
+    }
+    
+}
+
 
 #pragma mark ---
 

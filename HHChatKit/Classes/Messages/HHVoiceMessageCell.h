@@ -23,6 +23,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)fillWithData:(HHVoiceMessageCellData *)data;
 
+- (void)stopVoiceMessage;
+- (void)playVoiceMessage;
+
 @end
 
 NS_ASSUME_NONNULL_END

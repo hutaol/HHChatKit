@@ -10,7 +10,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSInteger, HHVoiceMessageStatus) {
+    HHVoiceMessageStatusNormal,
+    HHVoiceMessageStatusRecording,
+    HHVoiceMessageStatusPlaying,
+};
+
 @interface HHVoiceMessageCellData : HHBubbleMessageCellData
+
+///
+@property (nonatomic, assign) HHVoiceMessageStatus voiceStatus;
 
 /// 上传时，语音文件的路径，接收时使用 IM SDK 接口中的 getSound 获得数据
 @property (nonatomic, strong) NSString *path;
@@ -39,9 +48,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, class) CGFloat incommingVoiceTop;
 
 @property (nonatomic, class) CGFloat outgoingVoiceTop;
-
-- (void)stopVoiceMessage;
-- (void)playVoiceMessage;
 
 @end
 

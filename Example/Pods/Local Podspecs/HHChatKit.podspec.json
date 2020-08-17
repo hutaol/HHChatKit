@@ -1,6 +1,6 @@
 {
   "name": "HHChatKit",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "summary": "使用SocketRocket聊天库",
   "description": "TODO: Add long description of the pod here.",
   "homepage": "https://github.com/hutaol/HHChatKit",
@@ -13,7 +13,7 @@
   },
   "source": {
     "git": "https://github.com/hutaol/HHChatKit.git",
-    "tag": "0.1.5"
+    "tag": "0.1.6"
   },
   "platforms": {
     "ios": "8.0"

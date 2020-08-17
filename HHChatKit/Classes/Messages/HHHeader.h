@@ -15,4 +15,5 @@ static NSString *VoiceMessageCell_ReuseId = @"VoiceMessageCell_ReuseId";
 static NSString *CustomMessageCell_ReuseId = @"CustomMessageCell_ReuseId";
 static NSString *SystemMessageCell_ReuseId = @"SystemMessageCell_ReuseId";
 
+
 #endif /* HHHeader_h */

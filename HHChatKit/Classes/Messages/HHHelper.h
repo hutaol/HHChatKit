@@ -19,6 +19,8 @@ typedef void (^TAsyncImageComplete)(NSString *path, UIImage *image);
 
 + (NSString *)randAvatarUrl;
 
++ (NSString *)getImagePath;
+
 @end
 
 NS_ASSUME_NONNULL_END
