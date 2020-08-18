@@ -109,13 +109,11 @@
         [_indicator stopAnimating];
         self.retryView.image = [[HHImageCache sharedInstance] getImageFromMessageCache:@"msg_error"];
     } else {
-        if (data.status == Msg_Status_Sending_2) {
+        if (data.status == Msg_Status_Sending) {
             [_indicator startAnimating];
-        }
-        else if(data.status == Msg_Status_Succ){
+        } else if(data.status == Msg_Status_Succ) {
             [_indicator stopAnimating];
-        }
-        else if(data.status == Msg_Status_Sending){
+        } else if(data.status == Msg_Status_Sending) {
             [_indicator stopAnimating];
         }
         self.retryView.image = nil;
@@ -162,7 +160,7 @@
         .mm_top(ctop).mm_width(csize.width).mm_height(csize.height);
         
         self.nameLabel.mm_left(_container.mm_x+cellLayout.nameHorizontalMargin);
-        self.indicator.mm_sizeToFit().mm__centerY(_container.mm_centerY).mm_left(_container.mm_maxX + 8);
+        self.indicator.mm_sizeToFit().mm__centerY(_container.mm_h/2).mm_left(_container.mm_maxX + 8);
         self.retryView.frame = self.indicator.frame;
         
         // 这里不能像 retryView 一样直接使用 indicator 的设定，否则内容会显示不全。
@@ -184,7 +182,7 @@
         .mm_right(cellLayout.messageInsets.right+self.mm_w-self.avatarView.mm_x).mm_top(ctop);
         
         self.nameLabel.mm_right(_container.mm_r+cellLayout.nameHorizontalMargin);
-        self.indicator.mm_sizeToFit().mm__centerY(_container.mm_centerY).mm_left(_container.mm_x - 8 - _indicator.mm_w);
+        self.indicator.mm_sizeToFit().mm__centerY(_container.mm_h/2).mm_left(_container.mm_x - 8 - _indicator.mm_w);
         self.retryView.frame = self.indicator.frame;
         self.readReceiptView.hidden = YES;
 

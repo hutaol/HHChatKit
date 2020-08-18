@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -32,9 +33,9 @@ typedef NS_ENUM(NSInteger, HHKeyboardMoreItemType) {
 @property (nonatomic, assign) HHKeyboardMoreItemType type;
 
 @property (nonatomic, strong) NSString *title;
-@property (nonatomic, strong) NSString *imagePath;
+@property (nonatomic, strong) UIImage *image;
 
-+ (instancetype)moreItemWithType:(HHKeyboardMoreItemType)type title:(NSString *)title imagePath:(NSString *)imagePath;
++ (instancetype)moreItemWithType:(HHKeyboardMoreItemType)type title:(NSString *)title image:(UIImage *)image;
 
 @end
 

@@ -19,7 +19,10 @@ typedef void (^TAsyncImageComplete)(NSString *path, UIImage *image);
 
 + (NSString *)randAvatarUrl;
 
-+ (NSString *)getImagePath;
+/// 图片 -- 聊天
++ (NSString *)pathUserChatImage:(NSString *)imageName;
+/// 语音 -- 聊天
++ (NSString *)pathUserChatVoice:(NSString *)voiceName;
 
 @end
 

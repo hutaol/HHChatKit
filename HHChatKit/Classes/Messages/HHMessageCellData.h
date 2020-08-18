@@ -17,14 +17,12 @@ NS_ASSUME_NONNULL_BEGIN
 
  - Msg_Status_Init: 消息创建
  - Msg_Status_Sending: 消息发送中
- - Msg_Status_Sending_2: 消息发送中_2，推荐使用
  - Msg_Status_Succ: 消息发送成功
  - Msg_Status_Fail: 消息发送失败
  */
 typedef NS_ENUM(NSUInteger, HHMsgStatus) {
     Msg_Status_Init,
     Msg_Status_Sending,
-    Msg_Status_Sending_2,
     Msg_Status_Succ,
     Msg_Status_Fail,
 };
@@ -51,6 +49,8 @@ typedef NS_ENUM(NSUInteger, HHMsgDirection) {
 @property (nonatomic, strong) NSURL *avatarUrl;
 @property (nonatomic, strong) UIImage *avatarImage;
 @property (nonatomic, strong) NSString *name;
+
+/// 时间戳
 @property (nonatomic, copy) NSString *time;
 
 @property (nonatomic, assign) BOOL showName;

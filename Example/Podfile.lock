@@ -9,7 +9,7 @@ PODS:
   - FBSnapshotTestCase/Core (2.1.4)
   - FBSnapshotTestCase/SwiftSupport (2.1.4):
     - FBSnapshotTestCase/Core
-  - HHChatKit (0.1.9):
+  - HHChatKit (0.1.10):
     - SDWebImage (~> 5.8.4)
     - SocketRocket (~> 0.5.1)
     - YBImageBrowser (~> 3.0.9)
@@ -60,7 +60,7 @@ SPEC CHECKSUMS:
   Expecta: 3b6bd90a64b9a1dcb0b70aa0e10a7f8f631667d5
   "Expecta+Snapshots": dcff217eef506dabd6dfdc7864ea2da321fafbb8
   FBSnapshotTestCase: 094f9f314decbabe373b87cc339bea235a63e07a
-  HHChatKit: 39b289ed3553facd1a7ab9e2828f380dabecbd6d
+  HHChatKit: 99c2a97dafc56e325874dab3cf3a07e83764df88
   SDWebImage: cf6922231e95550934da2ada0f20f2becf2ceba9
   SocketRocket: d57c7159b83c3c6655745cd15302aa24b6bae531
   Specta: 3e1bd89c3517421982dc4d1c992503e48bd5fe66

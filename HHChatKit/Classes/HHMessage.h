@@ -81,6 +81,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface HHMessage : NSObject
 
+/// 消息ID
+@property (nonatomic, copy) NSString *msgId;
+/// 消息状态
+@property (nonatomic, assign) HHMessageStatus status;
+/// 当前消息的时间戳
+@property (nonatomic, copy) NSString *timestamp;
+/// 是否已读
+@property (nonatomic, assign) BOOL isReaded;
+/// 是否发送方
+@property (nonatomic, assign) BOOL isSelf;
+/// 发送方
+@property (nonatomic, copy) NSString *sender;
+
+
 /// 增加Elem
 /// @param elem elem结构
 /// @return 0       表示成功
@@ -95,29 +109,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 获取Elem数量
 - (int)elemCount;
-
-/// 是否已读
-/// @return YES 已读  NO 未读
-- (BOOL)isReaded;
-
-/// 消息状态
-- (HHMessageStatus)status;
-
-/// 是否发送方
-/// @return YES 表示是发送消息    NO 表示是接收消息
-- (BOOL)isSelf;
-
-/// 获取发送方
-- (NSString *)sender;
-
-/// 删除消息：注意这里仅修改状态
-- (BOOL)remove;
-
-/// 消息Id
-- (NSString *)msgId;
-
-/// 当前消息的时间戳
-- (NSDate *)timestamp;
 
 @end
 

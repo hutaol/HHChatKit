@@ -9,6 +9,7 @@
 #import "HHHelper.h"
 #import "PathTool.h"
 #import "NSString+HHKeyBoard.h"
+#import "HHChatManager.h"
 
 @implementation HHHelper
 
@@ -88,6 +89,33 @@
 
     return [NSString stringWithFormat:@"%@/%@", filePath, [name md5]];
 
+}
+
++ (NSString *)pathUserChatImage:(NSString *)imageName {
+    NSString *userID = [[HHChatManager shareManager] getLoginUser];
+    NSString *path = [NSString stringWithFormat:@"%@/User/%@/Chat/Images/", [PathTool getDocumentPath], userID];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        NSError *error;
+        [[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:&error];
+        if (error) {
+            NSLog(@"File Create Failed: %@", path);
+        }
+    }
+    return [path stringByAppendingString:imageName];
+}
+
++ (NSString *)pathUserChatVoice:(NSString *)voiceName {
+    NSString *userID = [[HHChatManager shareManager] getLoginUser];
+
+    NSString *path = [NSString stringWithFormat:@"%@/User/%@/Chat/Voices/", [PathTool getDocumentPath], userID];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        NSError *error;
+        [[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:&error];
+        if (error) {
+            NSLog(@"File Create Failed: %@", path);
+        }
+    }
+    return [path stringByAppendingString:voiceName];
 }
 
 @end

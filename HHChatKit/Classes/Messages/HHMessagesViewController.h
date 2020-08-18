@@ -8,10 +8,21 @@
 
 #import <UIKit/UIKit.h>
 #import "HHKeyBoardMoreItem.h"
+#import "HHTextMessageCell.h"
+#import "HHImageMessageCell.h"
+#import "HHVoiceMessageCell.h"
+#import "HHSystemMessageCell.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define MessageCount 20
+
 @interface HHMessagesViewController : UIViewController
+
+/// 记录最新展示的时间消息
+@property (nonatomic, strong) HHMessageCellData *msgForDate;
+/// 记录最新的消息
+@property (nonatomic, strong) HHMessageCellData *msgForGet;
 
 /// 替换掉more items
 - (void)repleceMoreItems:(NSMutableArray<HHKeyBoardMoreItem *> *)items;
@@ -20,6 +31,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)onActionPhoto;
 - (void)onAcitonCamera;
+
+/// 可重写 加载消息
+- (void)loadMessageWithComplation:(void(^)(BOOL status, NSArray *msgs))complation;
 
 @end
 

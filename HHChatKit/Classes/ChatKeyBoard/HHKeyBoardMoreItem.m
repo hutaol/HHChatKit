@@ -10,11 +10,11 @@
 
 @implementation HHKeyBoardMoreItem
 
-+ (instancetype)moreItemWithType:(HHKeyboardMoreItemType)type title:(NSString *)title imagePath:(NSString *)imagePath {
++ (instancetype)moreItemWithType:(HHKeyboardMoreItemType)type title:(NSString *)title image:(UIImage *)image {
     HHKeyBoardMoreItem *item = [[HHKeyBoardMoreItem alloc] init];
     item.type = type;
     item.title = title;
-    item.imagePath = imagePath;
+    item.image = image;
     return item;
 }
 

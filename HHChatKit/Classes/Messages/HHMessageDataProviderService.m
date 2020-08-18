@@ -8,6 +8,9 @@
 
 #import "HHMessageDataProviderService.h"
 #import "HHHelper.h"
+#import "NSString+HHKeyBoard.h"
+#import "PathTool.h"
+#import "NSDate+HHChat.h"
 
 @implementation HHMessageDataProviderService
 
@@ -45,8 +48,7 @@
 + (HHMessageCellData *)getMessageCellData:(NSString *)text {
     HHTextMessageCellData *data = [[HHTextMessageCellData alloc] initWithDirection:MsgDirectionOutgoing];
     data.content = text;
-    data.avatarUrl = [NSURL URLWithString:[HHHelper randAvatarUrl]];
-    
+    [self addCommonData:data];
     return data;
 }
 
@@ -55,13 +57,18 @@
     int duration = [voice[@"duration"] intValue];
     int length = (int)[[[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil] fileSize];
     
+    NSString *name = [path lastPathComponent];
+    NSString *toPath = [HHHelper pathUserChatVoice:name];
+    [PathTool moveSourceFile:path toDesPath:toPath];
+    
     HHVoiceMessageCellData *data = [[HHVoiceMessageCellData alloc] initWithDirection:MsgDirectionOutgoing];
-    data.path = path;
+    data.path = toPath;
     data.duration = duration;
     data.length = length;
 //    uiVoice.url = voice[@"url"];
-    data.avatarUrl = [NSURL URLWithString:[HHHelper randAvatarUrl]];
-
+    
+    [self addCommonData:data];
+    
     return data;
 }
 
@@ -71,14 +78,31 @@
     
     NSData *imgData = UIImageJPEGRepresentation(image, 0.75);
 
-    NSString *path = [HHHelper getImagePath];
+    NSString *name = [NSString stringWithFormat:@"%ld", (long)[[NSDate date] timeIntervalSince1970]];
+    name = [name md5];
+    NSString *imagePath = [HHHelper pathUserChatImage:name];
     
-    [[NSFileManager defaultManager] createFileAtPath:path contents:imgData attributes:nil];
+    [[NSFileManager defaultManager] createFileAtPath:imagePath contents:imgData attributes:nil];
     
-    data.path = path;
-    data.length = [imgData length]/1000;
+    data.path = imagePath;
+    
+    int length = (int)[[[NSFileManager defaultManager] attributesOfItemAtPath:imagePath error:nil] fileSize];
+
+    data.length = length;
+    
+    [self addCommonData:data];
     
     return data;
+}
+
+// TODO
++ (void)addCommonData:(HHMessageCellData *)data {
+    data.time = [NSDate timestamp:[NSDate new]];
+    
+    data.avatarUrl = [NSURL URLWithString:[HHHelper randAvatarUrl]];
+    data.name = @"user";
+    data.showName = NO;
+    
 }
 
 + (HHMessageCellData *)getMessageCellDataWithElem:(HHElem *)elem message:(HHMessage *)message {
@@ -111,6 +135,9 @@
     } else if ([elem isKindOfClass:[HHCustomElem class]]) {
 //        data = [self getCustomCellData:message fromElem:(TIMCustomElem *)elem];
     }
+    
+    data.name = message.sender;
+    data.time = message.timestamp;
     
     data.innerMessage = message;
     

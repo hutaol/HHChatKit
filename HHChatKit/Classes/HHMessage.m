@@ -8,6 +8,8 @@
 
 #import "HHMessage.h"
 #import <YYModel/YYModel.h>
+#import "NSDate+HHChat.h"
+#import "HHChatManager.h"
 
 @implementation HHElem
 
@@ -164,32 +166,18 @@
     return (int)self.elemArray.count;
 }
 
-- (BOOL)isReaded {
-    return self.readed;
-}
-
-- (HHMessageStatus)status {
-    return 0;
-}
-
-- (BOOL)isSelf {
-    return YES;
-}
-
-- (NSString *)sender {
-    return @"";
-}
-
-- (BOOL)remove {
-    return NO;
-}
-
-- (NSString *)msgId {
-    return @"";
-}
-
-- (NSDate *)timestamp {
-    return [NSDate new];
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.msgId = [NSDate timestamp:[NSDate new]];
+        self.timestamp = [NSDate timestamp:[NSDate new]];
+        self.status = HHMessageStatusSending;
+        self.isReaded = NO;
+        self.isSelf = YES;
+        self.sender = [[HHChatManager shareManager] getLoginUser];
+    }
+    return self;
 }
 
 @end

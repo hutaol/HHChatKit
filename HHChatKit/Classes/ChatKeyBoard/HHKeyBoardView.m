@@ -196,6 +196,10 @@
 // 收起键盘
 - (void)dismissKeyboard {
     [self.textView resignFirstResponder];
+    
+    if (self.currentState == HHKeyBoardStateNormal) {
+        return;
+    }
 
     if (self.currentState == HHKeyBoardStateMore) {
         
@@ -211,8 +215,11 @@
         
     } else {
         [self chatKeyboard:self didChangeHeight:0];
+        if (self.currentState == HHKeyBoardStateKeyBoard) {
+            self.currentState = HHKeyBoardStateNormal;
+        }
     }
-
+    
 }
 
 #pragma mark - UITextViewDelegate

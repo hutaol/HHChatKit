@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 创建文件
 + (BOOL)createDirectory:(NSString *)filePath;
 
-///删除document目录下的一个文件夹
+/// 删除document目录下的一个文件夹
 + (BOOL)removeFolderInDocumet:(NSString *)aFolderNameInDoc;
 /// 删除cache目录下的一个文件夹
 + (BOOL)removeFolderInCache:(NSString *)aFolderNameInCache;

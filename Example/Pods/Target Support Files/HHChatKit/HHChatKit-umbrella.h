@@ -41,6 +41,7 @@
 #import "HHConversationViewController.h"
 #import "HHChatCallback.h"
 #import "HHChatComm.h"
+#import "HHChatKit.h"
 #import "HHChatManager.h"
 #import "HHCodingModel.h"
 #import "HHHeader.h"

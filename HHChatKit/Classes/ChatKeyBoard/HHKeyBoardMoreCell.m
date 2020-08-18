@@ -47,7 +47,7 @@
     self.titleLabel.hidden = NO;
     self.iconButton.hidden = NO;
     self.titleLabel.text = item.title;
-    [self.iconButton setImage:[UIImage imageNamed:item.imagePath] forState:UIControlStateNormal];
+    [self.iconButton setImage:item.image forState:UIControlStateNormal];
 }
 
 - (void)iconButtonDown:(UIButton *)sender {

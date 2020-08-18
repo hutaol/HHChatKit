@@ -162,7 +162,7 @@ static HHAudioRecorder *_audioRecorder;
 
 - (NSString *)filePath {
     if (!_filePath) {
-        _filePath = [PathTool getFileDocumentPath:@"/HHChatKit/voice"];;
+        _filePath = [PathTool getFileCachePath:@"/HHChatKit/voice"];;
     }
     return _filePath;
 }

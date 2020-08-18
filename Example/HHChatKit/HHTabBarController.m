@@ -9,6 +9,7 @@
 #import "HHTabBarController.h"
 #import "HHConvListViewController.h"
 #import "HHMineViewController.h"
+#import <HHChatKit/HHChatManager.h>
 
 @interface HHTabBarController ()
 
@@ -18,13 +19,18 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    [[HHChatManager shareManager] initKit:@"ws://172.16.2.60:8091"];
+
 
     HHConvListViewController *conv = [[HHConvListViewController alloc] init];
     UINavigationController *convNav = [[UINavigationController alloc] initWithRootViewController:conv];
+    conv.title = @"交流";
     
     HHMineViewController *mine = [[HHMineViewController alloc] init];
     UINavigationController *mineNav = [[UINavigationController alloc] initWithRootViewController:mine];
-    
+    mine.title = @"我";
+
     self.viewControllers = @[convNav, mineNav];
     
 }

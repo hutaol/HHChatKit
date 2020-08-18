@@ -17,29 +17,36 @@
 #import "NSString+HHKeyBoard.h"
 #import "NSDate+HHChat.h"
 
-#import "HHTextMessageCell.h"
-#import "HHImageMessageCell.h"
-#import "HHVoiceMessageCell.h"
-#import "HHSystemMessageCell.h"
-
 #import "HHHeader.h"
+#import "HHHelper.h"
+
 #import "HHMessage.h"
 
+#import "HHImageCache.h"
 #import "HHMessageDataProviderService.h"
 #import "ToastTool.h"
 #import "ImageTool.h"
+#import "AlertTool.h"
 #import "HHAudioPlayer.h"
 
 @interface HHMessagesViewController () <UITableViewDataSource, UITableViewDelegate, HHKeyBoardViewDelegate, HHMessageCellDelegate, HHMessageListener>
 
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) HHKeyBoardView *keyBoardView;
-@property (nonatomic, strong) NSMutableArray *dataSource;
+
+@property (nonatomic, strong) NSMutableArray *uiMsgs;
 @property (nonatomic, strong) NSMutableArray *heightCache;
 
 @property (nonatomic, strong) HHMessageCellData *menuUIMsg;
+@property (nonatomic, strong) HHMessageCellData *reSendUIMsg;
 
 @property (nonatomic, strong) NSMutableArray<HHKeyBoardMoreItem *> *moreItems;
+
+@property (nonatomic, strong) UIActivityIndicatorView *indicatorView;
+@property (nonatomic, assign) BOOL isScrollBottom;
+@property (nonatomic, assign) BOOL isLoadingMsg;
+@property (nonatomic, assign) BOOL noMoreMsg;
+@property (nonatomic, assign) BOOL firstLoad;
 
 @end
 
@@ -50,6 +57,17 @@
     
     self.view.backgroundColor = [UIColor whiteColor];
     
+    [[HHChatManager shareManager] setMessageListener:self];
+    
+    [self setupViews];
+    [self loadMessage];
+}
+
+- (void)didTapViewController {
+    [self.keyBoardView dismissKeyboard];
+}
+
+- (void)setupViews {
     [self.view addSubview:self.tableView];
     [self.view addSubview:self.keyBoardView];
     
@@ -60,12 +78,99 @@
 
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapViewController)];
     [self.tableView addGestureRecognizer:tap];
+        
+    _indicatorView = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, TMessageController_Header_Height)];
+    _indicatorView.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
+    self.tableView.tableHeaderView = _indicatorView;
+       
+    _heightCache = [NSMutableArray array];
+    _uiMsgs = [NSMutableArray array];
+    _firstLoad = YES;
     
-    [[HHChatManager shareManager] setMessageListener:self];
 }
 
-- (void)didTapViewController {
-    [self.keyBoardView dismissKeyboard];
+- (void)loadMessage {
+    if (_isLoadingMsg || _noMoreMsg) {
+        return;
+    }
+    _isLoadingMsg = YES;
+    int msgCount = MessageCount;
+    
+    @weakify(self)
+    [self loadMessageWithComplation:^(BOOL status, NSArray *msgs) {
+        @strongify(self)
+        
+        if (msgs != 0) {
+            self.msgForGet = msgs[0];
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+                   
+            if (msgs.count < msgCount) {
+                self.noMoreMsg = YES;
+                self.indicatorView.mm_h = 0;
+            }
+            
+            if (msgs.count != 0) {
+                NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, msgs.count)];
+                [self.uiMsgs insertObjects:msgs atIndexes:indexSet];
+                [self.heightCache removeAllObjects];
+                [self.tableView reloadData];
+                [self.tableView layoutIfNeeded];
+
+                if (!self.firstLoad) {
+                    CGFloat visibleHeight = 0;
+                    for (NSInteger i = 0; i < msgs.count; ++i) {
+                        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:0];
+                        visibleHeight += [self tableView:self.tableView heightForRowAtIndexPath:indexPath];
+                    }
+                    visibleHeight -= self.tableView.contentInset.bottom;
+                    if (self.noMoreMsg) {
+                        visibleHeight -= TMessageController_Header_Height;
+                    }
+                    [self.tableView scrollRectToVisible:CGRectMake(0, self.tableView.contentOffset.y + visibleHeight, self.tableView.frame.size.width, self.tableView.frame.size.height) animated:NO];
+                }
+            }
+            
+            self.isLoadingMsg = NO;
+            [self.indicatorView stopAnimating];
+            self.firstLoad = NO;
+                        
+        });
+        
+    }];
+
+}
+
+- (void)loadMessageWithComplation:(void(^)(BOOL status, NSArray *msgs))complation {
+    NSMutableArray *arr = [NSMutableArray array];
+    for (int i = 0; i < 20; i ++) {
+        HHTextMessageCellData *cell = [[HHTextMessageCellData alloc] initWithDirection:(i%2==0)?MsgDirectionIncoming:MsgDirectionOutgoing];
+        cell.name = [NSString stringWithFormat:@"name %d", i];
+        cell.content = [NSString stringWithFormat:@"content %d", i];
+        cell.showName = cell.direction==MsgDirectionIncoming;
+        cell.showTime = YES;
+        [arr addObject:cell];
+    }
+    if (complation) {
+        complation(YES, arr);
+    }
+}
+
+- (BOOL)showTimeFrom:(NSString *)time {
+
+    if (!_msgForDate) {
+        return YES;
+    }
+    
+    NSDate *date = [NSDate dateForTimestamp:time];
+    NSDate *msgDate = [NSDate dateForTimestamp:_msgForDate.time];
+    
+    if (fabs([date timeIntervalSinceDate:msgDate]) > (5 * 60)) {
+        return YES;
+    }
+    
+    return NO;
 }
 
 #pragma mark - HHMessageListener
@@ -75,8 +180,18 @@
         for (int i = 0; i < msg.elemCount; i ++) {
             HHElem *elem = [msg getElem:i];
             HHMessageCellData *data = [HHMessageDataProviderService getMessageCellDataWithElem:elem message:msg];
+            data.showName = YES;
             
-            [self.dataSource addObject:data];
+            BOOL showTime = [self showTimeFrom:[msg timestamp]];
+            if (showTime) {
+                _msgForDate = data;
+            }
+            data.showTime = showTime;
+            
+            // 头像 名称
+            data.avatarUrl = [NSURL URLWithString:[HHHelper randAvatarUrl]];
+            
+            [_uiMsgs addObject:data];
             [self.tableView reloadData];
             [self scrollToBottom:YES];
         }
@@ -90,24 +205,47 @@
     
     if (imMsg) {
         // 重发 移除原来的
-        NSInteger row = [self.dataSource indexOfObject:msg];
-        [self.heightCache removeObjectAtIndex:row];
-        [self.dataSource removeObjectAtIndex:row];
+        NSInteger row = [_uiMsgs indexOfObject:msg];
+        [_heightCache removeObjectAtIndex:row];
+        [_uiMsgs removeObjectAtIndex:row];
         [self.tableView deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:row inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
     }
     
     // 添加HHMessage
     msg.innerMessage = [HHMessageDataProviderService getMessage:msg];
-
+    // 发送中
+    msg.status = Msg_Status_Sending;
+    
     // 添加到列表
-    [self.dataSource addObject:msg];
-    [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.dataSource.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+    [_uiMsgs addObject:msg];
+    [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_uiMsgs.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
     [self scrollToBottom:YES];
+
+    __weak typeof(self) ws = self;
 
     // 发送
     if (msg.innerMessage) {
-        [[HHChatManager shareManager] sendMessage:msg.innerMessage cb:nil];
+        [[HHChatManager shareManager] sendMessage:msg.innerMessage succ:^{
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [ws changeMsg:msg status:Msg_Status_Succ];
+            });
+            
+        } fail:^(int code, NSString * _Nonnull desc) {
+            
+            NSLog(@"====== code: %d msg: %@" , code, desc);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [ws changeMsg:msg status:Msg_Status_Fail];
+            });
+            
+        }];
     }
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (msg.status == Msg_Status_Sending) {
+            [ws changeMsg:msg status:Msg_Status_Sending];
+        }
+    });
 
 }
 
@@ -134,6 +272,13 @@
     // 发送图片
     [self sendMessage:[HHMessageDataProviderService getMessageCellDataWithImage:image]];
 
+}
+
+- (void)changeMsg:(HHMessageCellData *)msg status:(HHMsgStatus)status {
+    msg.status = status;
+    NSInteger index = [_uiMsgs indexOfObject:msg];
+    HHMessageCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
+    [cell fillWithData:msg];
 }
 
 #pragma mark - Public Method
@@ -168,13 +313,22 @@
 
 #pragma mark - UITableViewDataSource, UITableViewDelegate
 
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (_isScrollBottom == NO) {
+        [self scrollToBottom:NO];
+        if (indexPath.row == _uiMsgs.count-1) {
+            _isScrollBottom = YES;
+        }
+    }
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.dataSource.count;
+    return _uiMsgs.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    HHMessageCellData *data = self.dataSource[indexPath.row];
+    HHMessageCellData *data = _uiMsgs[indexPath.row];
     HHMessageCell *cell = nil;
 
     if (!data.reuseId) {
@@ -193,7 +347,7 @@
     
     cell = [tableView dequeueReusableCellWithIdentifier:data.reuseId forIndexPath:indexPath];
     cell.delegate = self;
-    [cell fillWithData:self.dataSource[indexPath.row]];
+    [cell fillWithData:_uiMsgs[indexPath.row]];
 
     return cell;
 }
@@ -203,10 +357,41 @@
     if(_heightCache.count > indexPath.row){
         return [_heightCache[indexPath.row] floatValue];
     }
-    HHMessageCellData *data = self.dataSource[indexPath.row];
+    HHMessageCellData *data = _uiMsgs[indexPath.row];
     height = [data heightOfWidth:kbScreenWidth];
     [_heightCache insertObject:[NSNumber numberWithFloat:height] atIndex:indexPath.row];
     return height;
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if (!_noMoreMsg && scrollView.contentOffset.y <= TMessageController_Header_Height) {
+        if (!_indicatorView.isAnimating) {
+            [_indicatorView startAnimating];
+        }
+    } else {
+        if (_indicatorView.isAnimating) {
+            [_indicatorView stopAnimating];
+        }
+    }
+
+//    NSLog(@"%f", scrollView.contentOffset.y);
+    // TODO 为了点击状态栏到顶部  self.navigationController.navigationBar.translucent 有关系
+    
+    if (self.navigationController.navigationBar.translucent) {
+        if (scrollView.contentOffset.y == -kbHeightNavBar) {
+            [self loadMessage];
+        }
+    } else {
+        if (scrollView.contentOffset.y == 0) {
+            [self loadMessage];
+        }
+    }
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    if (scrollView.contentOffset.y <= TMessageController_Header_Height) {
+        [self loadMessage];
+    }
 }
 
 #pragma mark - HHKeyBoardViewDelegate
@@ -271,9 +456,9 @@
 }
 
 - (void)scrollToBottom:(BOOL)animate {
-    if (self.dataSource.count > 0) {
+    if (_uiMsgs.count > 0) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.dataSource.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:animate];
+            [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.uiMsgs.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:animate];
         });
     }
 }
@@ -285,6 +470,7 @@
 }
 
 - (void)onSelectMessage:(HHMessageCell *)cell {
+    [self didTapViewController];
     if ([cell isKindOfClass:[HHImageMessageCell class]]) {
         [self showImageMessage:(HHImageMessageCell *)cell];
         
@@ -295,7 +481,12 @@
 }
 
 - (void)onRetryMessage:(HHMessageCell *)cell {
-    
+    _reSendUIMsg = cell.messageData;
+    [AlertTool alertWithTitle:@"确定重发此消息吗？" message:nil cancelTitle:@"取消" buttonTitles:@[@"重发"] actionsBlock:^(NSInteger buttonIndex, NSString * _Nonnull buttonTitle) {
+        if (buttonIndex == 0) {
+            [self sendMessage:self.reSendUIMsg];
+        }
+    }];
 }
 
 - (void)onLongPressMessage:(HHMessageCell *)cell {
@@ -308,8 +499,10 @@
     
     // TOOD 撤回 自己的消息5分钟 或者管理员3天
     long long interval = [[NSDate timestamp:[NSDate date]] longLongValue] - [data.time longLongValue];
-    
-    [items addObject:[[UIMenuItem alloc] initWithTitle:@"撤回" action:@selector(onRevoke:)]];
+    if (data.direction == MsgDirectionOutgoing) {
+        // 发送
+        [items addObject:[[UIMenuItem alloc] initWithTitle:@"撤回" action:@selector(onRevoke:)]];
+    }
 
     BOOL isFirstResponder = NO;
     
@@ -396,12 +589,12 @@
     if (!_menuUIMsg) {
         return;
     }
-    NSUInteger index = [self.dataSource indexOfObject:_menuUIMsg];
+    NSUInteger index = [_uiMsgs indexOfObject:_menuUIMsg];
     if (index == NSNotFound) {
         return;
     }
     
-    [self.dataSource removeObject:_menuUIMsg];
+    [_uiMsgs removeObject:_menuUIMsg];
     
     [self.tableView beginUpdates];
     [self.tableView deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
@@ -410,10 +603,10 @@
     data.content = [NSString stringWithFormat:@"%@撤回一条消息", _menuUIMsg.name];
     data.time = _menuUIMsg.time;
     
-    [self.dataSource insertObject:data atIndex:index];
+    [_uiMsgs insertObject:data atIndex:index];
     [self.tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
     [self.tableView endUpdates];
-    [self scrollToBottom:YES];
+//    [self scrollToBottom:YES];
     
 }
 
@@ -450,20 +643,6 @@
     return _keyBoardView;
 }
 
-- (NSMutableArray *)dataSource {
-    if (!_dataSource) {
-        _dataSource = [NSMutableArray array];
-    }
-    return _dataSource;
-}
-
-- (NSMutableArray *)heightCache {
-    if (!_heightCache) {
-        _heightCache = [NSMutableArray array];
-    }
-    return _heightCache;
-}
-
 //  屏幕将要旋转
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
     NSLog(@"viewWillTransitionToSize");
@@ -482,8 +661,8 @@
 - (NSMutableArray<HHKeyBoardMoreItem *> *)moreItems {
     if (!_moreItems) {
         _moreItems = [NSMutableArray array];
-        HHKeyBoardMoreItem *item1 = [HHKeyBoardMoreItem moreItemWithType:HHKeyboardMoreItemTypePhoto title:@"图片" imagePath:@"chat_more_icons_photo"];
-        HHKeyBoardMoreItem *item2 = [HHKeyBoardMoreItem moreItemWithType:HHKeyboardMoreItemTypeCamera title:@"拍摄" imagePath:@"chat_more_icons_camera"];
+        HHKeyBoardMoreItem *item1 = [HHKeyBoardMoreItem moreItemWithType:HHKeyboardMoreItemTypePhoto title:@"图片" image:[[HHImageCache sharedInstance] getImageFromMessageCache:@"chat_more_icons_photo"]];
+        HHKeyBoardMoreItem *item2 = [HHKeyBoardMoreItem moreItemWithType:HHKeyboardMoreItemTypeCamera title:@"拍摄" image:[[HHImageCache sharedInstance] getImageFromMessageCache:@"chat_more_icons_camera"]];
         [_moreItems addObject:item1];
         [_moreItems addObject:item2];
     }
