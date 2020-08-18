@@ -9,6 +9,7 @@
 #import "HHVoiceAnimationView.h"
 #import "HHAudioRecorder.h"
 #import "HHKeyBoardHeader.h"
+#import "HHImageCache.h"
 
 @interface HHVoiceAnimationView ()
 
@@ -27,12 +28,13 @@
         
         _iconImageView = [[UIImageView alloc] init];
         _iconImageView.contentMode = UIViewContentModeScaleAspectFit;
-        kbGetImage(_iconImageView.image, @"icon_voice_nor", @"ChatKeyBoard", @"image")
+        _iconImageView.image = [[HHImageCache sharedInstance] getImageFromKeyboardCache:@"icon_voice_nor"];
 
         [self addSubview:_iconImageView];
         
         _imageView = [[UIImageView alloc] init];
-        kbGetImage(_imageView.image, @"icon_voice_6", @"ChatKeyBoard", @"image")
+        _imageView.image = [[HHImageCache sharedInstance] getImageFromKeyboardCache:@"icon_voice_6"];
+
         _imageView.contentMode = UIViewContentModeScaleAspectFill;
         [self addSubview:_imageView];
         
@@ -45,7 +47,8 @@
         
         _cancelImageView = [[UIImageView alloc] init];
         _cancelImageView.hidden = YES;
-        kbGetImage(_cancelImageView.image, @"icon_voice_cancel", @"ChatKeyBoard", @"image")
+        _cancelImageView.image = [[HHImageCache sharedInstance] getImageFromKeyboardCache:@"icon_voice_cancel"];
+
         _cancelImageView.contentMode = UIViewContentModeScaleAspectFit;
         [self addSubview:_cancelImageView];
         

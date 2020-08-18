@@ -39,6 +39,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (UIImage *)getImageFromMessageCache:(NSString *)name;
 
+
+- (UIImage *)getImageFromKeyboardCache:(NSString *)name;
+
 /**
  *  将表情添加进本地缓存中
  *

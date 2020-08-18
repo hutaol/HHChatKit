@@ -24,12 +24,4 @@
 #define kbHeightSafeBottom ([[UIApplication sharedApplication] statusBarFrame].size.height>20?34:0)
 #define kbHeightTabBar (kbHeightSafeBottom + 49)
 
-
-#define kbGetImage(image, imgName, bundleName, secondBName){\
-NSString * path = [[NSBundle mainBundle] pathForResource:bundleName ofType:@"bundle"];\
-NSString *secondP = [path stringByAppendingPathComponent:secondBName];\
-NSString *imgNameFile = [secondP stringByAppendingPathComponent:imgName];\
-image = [UIImage imageWithContentsOfFile:imgNameFile];\
-}\
-
 #endif /* HHKeyBoardHeader_h */

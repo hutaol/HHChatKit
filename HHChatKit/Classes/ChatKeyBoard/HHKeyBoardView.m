@@ -20,6 +20,7 @@
 #import "UIView+HHLayout.h"
 
 #import "HHKeyBoardHeader.h"
+#import "HHImageCache.h"
 
 #define kButtonHeight            40.f   // 按钮高度
 #define kHorizenSpace            10.f   // 按钮水平间隔
@@ -92,14 +93,18 @@
 }
 
 - (void)p_initImage {
-    kbGetImage(kVoiceImage, @"icon_keyboard_voice_nor", @"ChatKeyBoard", @"image")
-    kbGetImage(kVoiceImageHL, @"icon_keyboard_voice_press", @"ChatKeyBoard", @"image")
-    kbGetImage(kFaceImage, @"icon_keyboard_face_nor", @"ChatKeyBoard", @"image")
-    kbGetImage(kFaceImageHL, @"icon_keyboard_face_press", @"ChatKeyBoard", @"image")
-    kbGetImage(kMoreImage, @"icon_keyboard_add_nor", @"ChatKeyBoard", @"image")
-    kbGetImage(kMoreImageHL, @"icon_keyboard_add_press", @"ChatKeyBoard", @"image")
-    kbGetImage(kKeyboardImage, @"icon_keyboard_keyboard_nor", @"ChatKeyBoard", @"image")
-    kbGetImage(kKeyboardImageHL, @"icon_keyboard_keyboard_press", @"ChatKeyBoard", @"image")
+    kVoiceImage = [[HHImageCache sharedInstance] getImageFromKeyboardCache:@"icon_keyboard_voice_nor"];
+    kVoiceImageHL = [[HHImageCache sharedInstance] getImageFromKeyboardCache:@"icon_keyboard_voice_press"];
+
+    kFaceImage = [[HHImageCache sharedInstance] getImageFromKeyboardCache:@"icon_keyboard_face_nor"];
+    kFaceImageHL = [[HHImageCache sharedInstance] getImageFromKeyboardCache:@"icon_keyboard_face_press"];
+
+    kMoreImage = [[HHImageCache sharedInstance] getImageFromKeyboardCache:@"icon_keyboard_add_nor"];
+    kMoreImageHL = [[HHImageCache sharedInstance] getImageFromKeyboardCache:@"icon_keyboard_add_press"];
+
+    kKeyboardImage = [[HHImageCache sharedInstance] getImageFromKeyboardCache:@"icon_keyboard_keyboard_nor"];
+    kKeyboardImageHL = [[HHImageCache sharedInstance] getImageFromKeyboardCache:@"icon_keyboard_keyboard_press"];
+
 }
 
 - (void)setupUI {

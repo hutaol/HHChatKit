@@ -62,7 +62,11 @@
 }
 
 - (UIImage *)getImageFromMessageCache:(NSString *)name {
-    return [self getResourceFromCache:TResource(name)];
+    return [self getResourceFromCache:[self getResourcePath:name]];
+}
+
+- (UIImage *)getImageFromKeyboardCache:(NSString *)name {
+    return [self getResourceFromCache:[self getResourcePathWithKeyboard:name]];
 }
 
 - (void)addFaceToCache:(NSString *)path {
@@ -89,6 +93,31 @@
     return image;
 }
 
+- (NSBundle *)getResourceBundle {
+        
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSURL *bundleURL = [bundle URLForResource:@"MessageResources" withExtension:@"bundle"];
+    NSBundle *resourceBundle = [NSBundle bundleWithURL:bundleURL];
+    if (!resourceBundle) {
+        NSString * bundlePath = [bundle.resourcePath stringByAppendingPathComponent:@"MessageResources.bundle"];
+        resourceBundle = [NSBundle bundleWithPath:bundlePath];
+    }
+    return resourceBundle ?: bundle;
+}
 
+- (NSString *)getResourcePath:(NSString *)name {
+    return [[[self getResourceBundle] resourcePath] stringByAppendingPathComponent:name];
+}
+
+- (NSString *)getResourcePathWithKeyboard:(NSString *)name {
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSURL *bundleURL = [bundle URLForResource:@"ChatKeyBoard" withExtension:@"bundle"];
+    NSBundle *resourceBundle = [NSBundle bundleWithURL:bundleURL];
+    if (!resourceBundle) {
+        NSString * bundlePath = [bundle.resourcePath stringByAppendingPathComponent:@"ChatKeyBoard.bundle"];
+        resourceBundle = [NSBundle bundleWithPath:bundlePath];
+    }
+    return [[resourceBundle?:bundle resourcePath] stringByAppendingPathComponent:name];
+}
 
 @end

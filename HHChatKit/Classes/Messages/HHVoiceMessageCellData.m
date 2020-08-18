@@ -22,21 +22,21 @@
     if (self) {
         if (direction == MsgDirectionIncoming) {
             self.cellLayout = [HHIncommingVoiceCellLayout new];
-            _voiceImage = [[HHImageCache sharedInstance] getResourceFromCache:TResource(@"message_voice_receiver_normal")];
+            _voiceImage = [[HHImageCache sharedInstance] getImageFromMessageCache:@"message_voice_receiver_normal"];
        
             _voiceAnimationImages = [NSArray arrayWithObjects:
-                                     [[HHImageCache sharedInstance] getResourceFromCache:TResource(@"message_voice_receiver_playing_1")],
-                                     [[HHImageCache sharedInstance] getResourceFromCache:TResource(@"message_voice_receiver_playing_2")],
-                                     [[HHImageCache sharedInstance] getResourceFromCache:TResource(@"message_voice_receiver_playing_3")], nil];
+                                     [[HHImageCache sharedInstance] getImageFromMessageCache:@"message_voice_receiver_playing_1"],
+                                     [[HHImageCache sharedInstance] getImageFromMessageCache:@"message_voice_receiver_playing_2"],
+                                     [[HHImageCache sharedInstance] getImageFromMessageCache:@"message_voice_receiver_playing_3"], nil];
             _voiceTop = [[self class] incommingVoiceTop];
         } else {
             self.cellLayout = [HHOutgoingVoiceCellLayout new];
             
-            _voiceImage = [[HHImageCache sharedInstance] getResourceFromCache:TResource(@"message_voice_sender_normal")];
+            _voiceImage = [[HHImageCache sharedInstance] getImageFromMessageCache:@"message_voice_sender_normal"];
             _voiceAnimationImages = [NSArray arrayWithObjects:
-                                     [[HHImageCache sharedInstance] getResourceFromCache:TResource(@"message_voice_sender_playing_1")],
-                                     [[HHImageCache sharedInstance] getResourceFromCache:TResource(@"message_voice_sender_playing_2")],
-                                     [[HHImageCache sharedInstance] getResourceFromCache:TResource(@"message_voice_sender_playing_3")], nil];
+                                     [[HHImageCache sharedInstance] getImageFromMessageCache:@"message_voice_sender_playing_1"],
+                                     [[HHImageCache sharedInstance] getImageFromMessageCache:@"message_voice_sender_playing_2"],
+                                     [[HHImageCache sharedInstance] getImageFromMessageCache:@"message_voice_sender_playing_3"], nil];
             _voiceTop = [[self class] outgoingVoiceTop];
         }
     }
