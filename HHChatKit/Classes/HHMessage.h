@@ -13,21 +13,21 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// 消息Elem基类
-@interface HHElem : HHCodingModel
+@interface TIMElem : HHCodingModel
 
 @property (nonatomic, copy) NSString *type;
 
 @end
 
 /// 文本消息Elem
-@interface HHTextElem : HHElem
+@interface TIMTextElem : TIMElem
 
 /// 消息文本
 @property (nonatomic, strong) NSString *text;
 
 @end
 
-@interface HHImageElem : HHElem
+@interface TIMImageElem : TIMElem
 
 /// 要发送的图片路径
 @property (nonatomic, strong) NSString *path;
@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /// 文件消息Elem
-@interface HHFileElem : HHElem
+@interface TIMFileElem : TIMElem
 
 /// 上传时，文件的路径（设置path时，优先上传文件）
 @property (nonatomic, strong) NSString *path;
@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface HHSoundElem : HHElem
+@interface TIMSoundElem : TIMElem
 
 /// 上传时，语音文件的路径（设置path时，优先上传语音文件），接收时使用getSoundToFile获得数据
 @property (nonatomic, strong) NSString *path;
@@ -62,14 +62,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface HHCustomElem : HHElem
+@interface TIMCustomElem : TIMElem
 
 /// 自定义消息二进制数据
 @property(nonatomic, strong) NSData *data;
 
 @end
 
-@interface HHFaceElem : HHElem
+@interface TIMFaceElem : TIMElem
 
 /// 表情索引，用户自定义
 @property (nonatomic, assign) int index;
@@ -100,12 +100,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// @return 0       表示成功
 ///         1       禁止添加Elem（文件或语音多于两个Elem）
 ///         2       未知Elem
-- (int)addElem:(HHElem *)elem;
+- (int)addElem:(TIMElem *)elem;
 
 /// 获取对应索引的Elem
 /// @param index 对应索引
 /// @return 返回对应Elem
-- (HHElem *)getElem:(int)index;
+- (TIMElem *)getElem:(int)index;
 
 /// 获取Elem数量
 - (int)elemCount;

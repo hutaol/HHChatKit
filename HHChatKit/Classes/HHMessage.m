@@ -11,82 +11,82 @@
 #import "NSDate+HHChat.h"
 #import "HHChatManager.h"
 
-@implementation HHElem
+@implementation TIMElem
 
 @end
 
-@implementation HHTextElem
+@implementation TIMTextElem
 
 - (instancetype)init
 {
     self = [super init];
     if (self) {
-        self.type = NSStringFromClass([HHTextElem class]);
+        self.type = NSStringFromClass([TIMTextElem class]);
     }
     return self;
 }
 
 @end
 
-@implementation HHImageElem
+@implementation TIMImageElem
 
 - (instancetype)init
 {
     self = [super init];
     if (self) {
-        self.type = NSStringFromClass([HHImageElem class]);
+        self.type = NSStringFromClass([TIMImageElem class]);
     }
     return self;
 }
 
 @end
 
-@implementation HHFileElem
+@implementation TIMFileElem
 
 - (instancetype)init
 {
     self = [super init];
     if (self) {
-        self.type = NSStringFromClass([HHFileElem class]);
+        self.type = NSStringFromClass([TIMFileElem class]);
     }
     return self;
 }
 
 @end
 
-@implementation HHSoundElem
+@implementation TIMSoundElem
 
 - (instancetype)init
 {
     self = [super init];
     if (self) {
-        self.type = NSStringFromClass([HHSoundElem class]);
+        self.type = NSStringFromClass([TIMSoundElem class]);
     }
     return self;
 }
 
 @end
 
-@implementation HHCustomElem
+@implementation TIMCustomElem
 
 - (instancetype)init
 {
     self = [super init];
     if (self) {
-        self.type = NSStringFromClass([HHCustomElem class]);
+        self.type = NSStringFromClass([TIMCustomElem class]);
     }
     return self;
 }
 
 @end
 
-@implementation HHFaceElem
+@implementation TIMFaceElem
 
 - (instancetype)init
 {
     self = [super init];
     if (self) {
-        self.type = NSStringFromClass([HHFaceElem class]);
+        self.type = NSStringFromClass([TIMFaceElem class]);
     }
     return self;
 }
@@ -104,7 +104,7 @@
 @implementation HHMessage
 
 //+ (NSDictionary *)modelContainerPropertyGenericClass {
-//    return @{@"elemArray" : [HHTextElem class]};
+//    return @{@"elemArray" : [TIMTextElem class]};
 //}
 
 - (BOOL)modelCustomTransformFromDictionary:(NSDictionary *)dic {
@@ -112,28 +112,28 @@
     NSMutableArray *mArr = [NSMutableArray array];
     for (NSDictionary *dict in arr) {
         NSString *type = dict[@"type"];
-        if ([type isEqualToString:NSStringFromClass([HHTextElem class])]) {
-            HHTextElem *elem = [HHTextElem yy_modelWithDictionary:dict];
+        if ([type isEqualToString:NSStringFromClass([TIMTextElem class])]) {
+            TIMTextElem *elem = [TIMTextElem yy_modelWithDictionary:dict];
             [mArr addObject:elem];
-        } else if ([type isEqualToString:NSStringFromClass([HHImageElem class])]) {
+        } else if ([type isEqualToString:NSStringFromClass([TIMImageElem class])]) {
             // TODO image
-            HHImageElem *elem = [HHImageElem yy_modelWithDictionary:dict];
+            TIMImageElem *elem = [TIMImageElem yy_modelWithDictionary:dict];
             [mArr addObject:elem];
 
-        } else if ([type isEqualToString:NSStringFromClass([HHFileElem class])]) {
-            HHFileElem *elem = [HHFileElem yy_modelWithDictionary:dict];
+        } else if ([type isEqualToString:NSStringFromClass([TIMFileElem class])]) {
+            TIMFileElem *elem = [TIMFileElem yy_modelWithDictionary:dict];
             [mArr addObject:elem];
 
-        } else if ([type isEqualToString:NSStringFromClass([HHSoundElem class])]) {
-            HHSoundElem *elem = [HHSoundElem yy_modelWithDictionary:dict];
+        } else if ([type isEqualToString:NSStringFromClass([TIMSoundElem class])]) {
+            TIMSoundElem *elem = [TIMSoundElem yy_modelWithDictionary:dict];
             [mArr addObject:elem];
 
-        } else if ([type isEqualToString:NSStringFromClass([HHCustomElem class])]) {
-            HHCustomElem *elem = [HHCustomElem yy_modelWithDictionary:dict];
+        } else if ([type isEqualToString:NSStringFromClass([TIMCustomElem class])]) {
+            TIMCustomElem *elem = [TIMCustomElem yy_modelWithDictionary:dict];
             [mArr addObject:elem];
 
-        } else if ([type isEqualToString:NSStringFromClass([HHFaceElem class])]) {
-            HHFaceElem *elem = [HHFaceElem yy_modelWithDictionary:dict];
+        } else if ([type isEqualToString:NSStringFromClass([TIMFaceElem class])]) {
+            TIMFaceElem *elem = [TIMFaceElem yy_modelWithDictionary:dict];
             [mArr addObject:elem];
         }
     }
@@ -150,12 +150,12 @@
     return _elemArray;
 }
 
-- (int)addElem:(HHElem *)elem {
+- (int)addElem:(TIMElem *)elem {
     [self.elemArray addObject:elem];
     return 0;
 }
 
-- (HHElem *)getElem:(int)index {
+- (TIMElem *)getElem:(int)index {
     if (self.elemArray.count > index) {
         return [self.elemArray objectAtIndex:index];
     }

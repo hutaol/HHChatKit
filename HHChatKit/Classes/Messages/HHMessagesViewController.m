@@ -178,7 +178,7 @@
 - (void)onNewMessage:(NSArray *)msgs {
     for (HHMessage *msg in msgs) {
         for (int i = 0; i < msg.elemCount; i ++) {
-            HHElem *elem = [msg getElem:i];
+            TIMElem *elem = [msg getElem:i];
             HHMessageCellData *data = [HHMessageDataProviderService getMessageCellDataWithElem:elem message:msg];
             data.showName = YES;
             

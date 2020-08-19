@@ -18,14 +18,14 @@
     if ([cellData isKindOfClass:[HHTextMessageCellData class]]) {
         HHTextMessageCellData *data = (HHTextMessageCellData *)cellData;
         HHMessage *message = [[HHMessage alloc] init];
-        HHTextElem *elem = [[HHTextElem alloc] init];
+        TIMTextElem *elem = [[TIMTextElem alloc] init];
         elem.text = data.content;
         [message addElem:elem];
         return message;
     } else if ([cellData isKindOfClass:[HHVoiceMessageCellData class]]) {
         HHVoiceMessageCellData *data = (HHVoiceMessageCellData *)cellData;
         HHMessage *message = [[HHMessage alloc] init];
-        HHSoundElem *elem = [[HHSoundElem alloc] init];
+        TIMSoundElem *elem = [[TIMSoundElem alloc] init];
         elem.path = data.path;
         elem.second = data.duration;
         elem.dataSize = data.length;
@@ -35,7 +35,7 @@
     } else if ([cellData isKindOfClass:[HHImageMessageCellData class]]) {
         HHImageMessageCellData *data = (HHImageMessageCellData *)cellData;
         HHMessage *message = [[HHMessage alloc] init];
-        HHImageElem *elem = [[HHImageElem alloc] init];
+        TIMImageElem *elem = [[TIMImageElem alloc] init];
 //        elem.imageList
         [message addElem:elem];
 
@@ -105,34 +105,34 @@
     
 }
 
-+ (HHMessageCellData *)getMessageCellDataWithElem:(HHElem *)elem message:(HHMessage *)message {
++ (HHMessageCellData *)getMessageCellDataWithElem:(TIMElem *)elem message:(HHMessage *)message {
     HHMessageCellData *data = nil;
 
-    if ([elem isKindOfClass:[HHTextElem class]]) {
+    if ([elem isKindOfClass:[TIMTextElem class]]) {
 
-        HHTextElem *textElem = (HHTextElem *)elem;
+        TIMTextElem *textElem = (TIMTextElem *)elem;
 
         HHTextMessageCellData *textData = [[HHTextMessageCellData alloc] initWithDirection:(message.isSelf ? MsgDirectionOutgoing : MsgDirectionIncoming)];
         textData.content = textElem.text;
         data = textData;
         
-    } else if ([elem isKindOfClass:[HHImageElem class]]) {
-        HHImageElem *imageElem = (HHImageElem *)elem;
+    } else if ([elem isKindOfClass:[TIMImageElem class]]) {
+        TIMImageElem *imageElem = (TIMImageElem *)elem;
 
         HHImageMessageCellData *imageData = [[HHImageMessageCellData alloc] initWithDirection:message.isSelf ? MsgDirectionOutgoing : MsgDirectionIncoming];
 //        imageData.largeImage = imageElem
         
         data = imageData;
 
-    } else if ([elem isKindOfClass:[HHSoundElem class]]) {
-        HHSoundElem *soundElem = (HHSoundElem *)elem;
+    } else if ([elem isKindOfClass:[TIMSoundElem class]]) {
+        TIMSoundElem *soundElem = (TIMSoundElem *)elem;
         HHVoiceMessageCellData *soundData = [[HHVoiceMessageCellData alloc] initWithDirection:(message.isSelf ? MsgDirectionOutgoing : MsgDirectionIncoming)];
         soundData.duration = soundElem.second;
         soundData.length = soundElem.dataSize;
             
         data = soundData;
 
-    } else if ([elem isKindOfClass:[HHCustomElem class]]) {
+    } else if ([elem isKindOfClass:[TIMCustomElem class]]) {
 //        data = [self getCustomCellData:message fromElem:(TIMCustomElem *)elem];
     }
     

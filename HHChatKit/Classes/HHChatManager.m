@@ -12,9 +12,11 @@
 #import "HHMessage.h"
 #import "NSDate+HHChat.h"
 
-@interface HHChatManager () <HHSocketManagerDelegte>
+@interface HHChatManager () <HHSocketManagerDelegate>
 
 @property (nonatomic, copy) NSString *userID;
+@property (nonatomic, copy) NSString *token;
+
 @property (nonatomic, assign) HHChatLoginStatus status;
 
 @property (nonatomic, copy) HHChatSucc succ;
@@ -36,58 +38,23 @@
 }
 
 - (void)initKit:(NSString *)url {
-    [[HHSocketManager shareManager] open:url];
+    
+    int one = rand()%999;
+    NSString *two = @"jfq402wo";
+    
+    self.token = @"81f58a18a77b31141f514f0bd4b2c910a7";
+    
+    url = [NSString stringWithFormat:@"%@/%d/%@/websocket?access_token=%@", url, one , two, self.token?:@""];
+    
+    NSLog(@"connect url: %@", url);
+    
+    [[HHSocketManager shareManager] connect:url];
     [HHSocketManager shareManager].delegate = self;
 }
 
 #pragma mark - HHSocketManagerDelegte
 
-- (void)socketManager:(HHSocketManager *)manager connectStatus:(HHSocketStatus)status {
-    
-}
 
-- (void)socketManager:(HHSocketManager *)manager receiveMessage:(id)message type:(HHSocketReceiveType)type {
-    
-    // TODO 验证发送成功
-    
-    if (type == HHSocketReceiveTypeForMessage) {
-        // message NSString
-        HHMessage *msg = [HHMessage yy_modelWithJSON:message];
-        
-        int isSendIndex = -1;
-        for (int i = 0 ; i < self.datas.count; ++i) {
-            HHMessage *mm = self.datas[i];
-            if ([mm.msgId isEqualToString:msg.msgId]) {
-                isSendIndex = i;
-                break;
-            }
-        }
-        
-        if (isSendIndex >= 0) {
-            // 验证发送成功
-            [self.datas removeObjectAtIndex:isSendIndex];
-            if (self.succ) {
-                self.succ();
-            }
-            return;
-        }
-        
-        if (self.messageListener) {
-            msg.isSelf = NO;
-            [self.messageListener onNewMessage:@[msg]];
-        }
-    }
-}
-
-- (void)socketManager:(HHSocketManager *)manager sendMessageError:(HHSocketStatus)status {
-    if (self.fail) {
-        self.fail((int)status, @"发送失败");
-    }
-}
-
-- (void)socketManager:(HHSocketManager *)manager closeCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean {
-    
-}
 
 - (void)login:(NSString *)userID succ:(HHChatSucc)succ fail:(HHChatFail)fail {
     self.userID = userID;
@@ -119,7 +86,7 @@
     
 //    NSData *data = [msg yy_modelToJSONData];
 //    NSLog(@"%@", [msg yy_modelToJSONString]);
-    [[HHSocketManager shareManager] send:str];
+    [[HHSocketManager shareManager] sendTo:@"/app/content" body:@"111"];
     
     return 0;
 }
