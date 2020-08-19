@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'HHChatKit'
-  s.version          = '0.1.11'
+  s.version          = '0.1.12'
   s.summary          = '使用SocketRocket聊天库'
 
 # This description is used to generate tags and improve search results.
@@ -43,10 +43,11 @@ TODO: Add long description of the pod here.
   
   s.vendored_libraries = "HHChatKit/Classes/Lame/libmp3lame.a"
 
-  s.dependency 'SocketRocket', '~> 0.5.1'
   s.dependency 'YYModel', '~> 1.0.4'
   s.dependency 'SDWebImage', '~> 5.8.4'
   s.dependency 'YBImageBrowser', '~> 3.0.9'
   s.dependency 'ZLPhotoBrowser', '~> 3.2.0'
+  s.dependency 'YYCache', '~> 1.0.4'
+  s.dependency 'AFNetworking', '~> 4.0'
 
 end
